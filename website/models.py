@@ -36,3 +36,26 @@ class Product(models.Model):
         )
         product.save()
         return product
+    
+    @classmethod
+    def count_products_based_on_stock(cls):
+        storage = {item.name: item.amount for item in Storage.objects.all()}
+        product_counts = {}
+
+        for product in cls.objects.all():
+            possible_counts = []
+            if product.sugar > 0:
+                possible_counts.append(storage.get('sugar', 0) // product.sugar)
+            if product.coffee > 0:
+                possible_counts.append(storage.get('coffee', 0) // product.coffee)
+            if product.flour > 0:
+                possible_counts.append(storage.get('flour', 0) // product.flour)
+            if product.chocolate > 0:
+                possible_counts.append(storage.get('chocolate', 0) // product.chocolate)
+            
+            if possible_counts:
+                product_counts[product.name] = min(possible_counts)
+            else:
+                product_counts[product.name] = 0
+
+        return product_counts
