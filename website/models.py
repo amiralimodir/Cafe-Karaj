@@ -59,3 +59,36 @@ class Product(models.Model):
                 product_counts[product.name] = 0
 
         return product_counts
+
+class Order(models.Model):
+    id = models.AutoField(primary_key=True)
+    username = models.ForeignKey(User, on_delete=models.CASCADE)
+    products = models.CharField(max_length=255)
+    purchase_amount = models.IntegerField()
+    type = models.BinaryField()
+
+    def __str__(self):
+        return str(self.id)
+
+    @classmethod
+    def get_order(cls, order_id):
+        try:
+            order = cls.objects.get(id=order_id)
+            user = order.username
+            order_products = OrderProduct.objects.filter(order=order)
+            products = [op.product for op in order_products]
+
+            return {
+                'order_id': order.id,
+                'user': {
+                    'username': user.username,
+                    'full_name': user.full_name,
+                    'email': user.email,
+                    'phone_number': user.phone_number
+                },
+                'products': [{'id': p.id, 'name': p.name, 'price': p.price} for p in products],
+                'purchase_amount': order.purchase_amount,
+                'type': order.type
+            }
+        except cls.DoesNotExist:
+            return None
