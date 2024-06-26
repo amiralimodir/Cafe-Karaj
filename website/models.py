@@ -22,4 +22,17 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
-
+    
+    @classmethod
+    def add_product(cls, name, sugar, coffee, flour, chocolate, vertical, price):
+        product = cls(
+            name=name,
+            sugar=sugar,
+            coffee=coffee,
+            flour=flour,
+            chocolate=chocolate,
+            vertical=vertical,
+            price=price
+        )
+        product.save()
+        return product
