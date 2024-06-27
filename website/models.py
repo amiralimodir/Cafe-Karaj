@@ -133,4 +133,22 @@ class Storage(models.Model):
 
     def __str__(self):
         return self.name
+    
+    @classmethod
+    def update_storage(cls, ingredient_name, quantity):
+        try:
+            storage_item = cls.objects.get(name=ingredient_name)
+            storage_item.amount = F('amount') + quantity
+            storage_item.save()
+            storage_item.refresh_from_db()
+            return {
+                'status': 'success',
+                'name': storage_item.name,
+                'amount': storage_item.amount
+            }
+        except cls.DoesNotExist:
+            return {
+                'status': 'error',
+                'message': f"Ingredient {ingredient_name} does not exist in storage."
+            }
 
