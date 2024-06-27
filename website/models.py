@@ -1,4 +1,5 @@
-from django.db import models
+from django.db import models, transaction, IntegrityError
+from django.db.models import F
 
 class User(models.Model):
     username = models.CharField(max_length=255, primary_key=True)
@@ -151,4 +152,17 @@ class Storage(models.Model):
                 'status': 'error',
                 'message': f"Ingredient {ingredient_name} does not exist in storage."
             }
+    
+class UserOrder(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f"{self.user.username} - {self.order.id}"
+
+class OrderProduct(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.order.id} - {self.product.name}"
