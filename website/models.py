@@ -71,12 +71,39 @@ class Order(models.Model):
         return str(self.id)
 
     @classmethod
-    def get_order(cls, order_id):
-        try:
-            order = cls.objects.get(id=order_id)
-            user = order.username
-            order_products = OrderProduct.objects.filter(order=order)
-            products = [op.product for op in order_products]
+    def get_order(cls, user, product_quantities, order_type):
+        with transaction.atomic():
+
+            # inventory check
+            for product_id, quantity in product_quantities:
+                product = Product.objects.get(id=product_id)
+                if product.sugar * quantity > Storage.objects.get(name='sugar').amount:
+                    return f"Not enough sugar to make {quantity} units of {product.name}"
+                if product.coffee * quantity > Storage.objects.get(name='coffee').amount:
+                    return f"Not enough coffee to make {quantity} units of {product.name}"
+                if product.flour * quantity > Storage.objects.get(name='flour').amount:
+                    return f"Not enough flour to make {quantity} units of {product.name}"
+                if product.chocolate * quantity > Storage.objects.get(name='chocolate').amount:
+                    return f"Not enough chocolate to make {quantity} units of {product.name}"
+            
+            for product_id, quantity in product_quantities:
+                product = Product.objects.get(id=product_id)
+                Storage.objects.filter(name='sugar').update(amount=F('amount') - product.sugar * quantity)
+                Storage.objects.filter(name='coffee').update(amount=F('amount') - product.coffee * quantity)
+                Storage.objects.filter(name='flour').update(amount=F('amount') - product.flour * quantity)
+                Storage.objects.filter(name='chocolate').update(amount=F('amount') - product.chocolate * quantity)
+
+            # order
+            purchase_amount = sum([Product.objects.get(id=product_id).price * quantity for product_id, quantity in product_quantities])
+            order = Order.objects.create(username=user, products=product_quantities, purchase_amount=purchase_amount, type=order_type)
+
+            UserOrder.objects.create(user=user, order=order)
+            for product_id, quantity in product_quantities:
+                product = Product.objects.get(id=product_id)
+                for _ in range(quantity):
+                    OrderProduct.objects.create(order=order, product=product)
+
+            products_list = [(Product.objects.get(id=pid), amount) for pid, amount in order.products]
 
             return {
                 'order_id': order.id,
@@ -86,12 +113,10 @@ class Order(models.Model):
                     'email': user.email,
                     'phone_number': user.phone_number
                 },
-                'products': [{'id': p.id, 'name': p.name, 'price': p.price} for p in products],
+                'products': [{'id': p.id, 'name': p.name, 'amount': amount, 'price': p.price} for p, amount in products_list],
                 'purchase_amount': order.purchase_amount,
-                'type': order.type
+                'type': 'take away' if order.type == b'\x01' else 'dine in'
             }
-        except cls.DoesNotExist:
-            return None
 
 class Admin(models.Model):
     username = models.CharField(max_length=255, primary_key=True)
@@ -108,3 +133,4 @@ class Storage(models.Model):
 
     def __str__(self):
         return self.name
+
