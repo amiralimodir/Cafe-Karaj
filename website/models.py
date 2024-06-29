@@ -1,5 +1,6 @@
 from django.db import models, transaction, IntegrityError
 from django.db.models import F
+import json
 
 class User(models.Model):
     username = models.CharField(max_length=255, primary_key=True)
@@ -66,58 +67,58 @@ class Order(models.Model):
     username = models.ForeignKey(User, on_delete=models.CASCADE)
     products = models.CharField(max_length=255)
     purchase_amount = models.IntegerField()
-    type = models.BinaryField()
+    order_type = models.BooleanField()
 
     def __str__(self):
         return str(self.id)
 
     @classmethod
-    def get_order(cls, user, product_quantities, order_type):
-        with transaction.atomic():
+    @transaction.atomic
+    def get_order(cls, username, products, order_type):
+        total_price = 0
 
-            # inventory check
-            for product_id, quantity in product_quantities:
-                product = Product.objects.get(id=product_id)
-                if product.sugar * quantity > Storage.objects.get(name='sugar').amount:
-                    return f"Not enough sugar to make {quantity} units of {product.name}"
-                if product.coffee * quantity > Storage.objects.get(name='coffee').amount:
-                    return f"Not enough coffee to make {quantity} units of {product.name}"
-                if product.flour * quantity > Storage.objects.get(name='flour').amount:
-                    return f"Not enough flour to make {quantity} units of {product.name}"
-                if product.chocolate * quantity > Storage.objects.get(name='chocolate').amount:
-                    return f"Not enough chocolate to make {quantity} units of {product.name}"
-            
-            for product_id, quantity in product_quantities:
-                product = Product.objects.get(id=product_id)
-                Storage.objects.filter(name='sugar').update(amount=F('amount') - product.sugar * quantity)
-                Storage.objects.filter(name='coffee').update(amount=F('amount') - product.coffee * quantity)
-                Storage.objects.filter(name='flour').update(amount=F('amount') - product.flour * quantity)
-                Storage.objects.filter(name='chocolate').update(amount=F('amount') - product.chocolate * quantity)
 
-            # order
-            purchase_amount = sum([Product.objects.get(id=product_id).price * quantity for product_id, quantity in product_quantities])
-            order = Order.objects.create(username=user, products=product_quantities, purchase_amount=purchase_amount, type=order_type)
+        for product_id, quantity in products:
+            product = Product.objects.get(id=product_id)
+            sugar_needed = product.sugar * quantity
+            coffee_needed = product.coffee * quantity
+            flour_needed = product.flour * quantity
+            chocolate_needed = product.chocolate * quantity
 
-            UserOrder.objects.create(user=user, order=order)
-            for product_id, quantity in product_quantities:
-                product = Product.objects.get(id=product_id)
-                for _ in range(quantity):
-                    OrderProduct.objects.create(order=order, product=product)
+            try:
+                sugar_stock = Storage.objects.get(name='sugar').amount
+                coffee_stock = Storage.objects.get(name='coffee').amount
+                flour_stock = Storage.objects.get(name='flour').amount
+                chocolate_stock = Storage.objects.get(name='chocolate').amount
+            except Storage.DoesNotExist:
+                return False, 'One or more components are missing from storage.'
 
-            products_list = [(Product.objects.get(id=pid), amount) for pid, amount in order.products]
+            if sugar_needed > sugar_stock or coffee_needed > coffee_stock or flour_needed > flour_stock or chocolate_needed > chocolate_stock:
+                return False, f'Not enough stock for {product.name}.'
 
-            return {
-                'order_id': order.id,
-                'user': {
-                    'username': user.username,
-                    'full_name': user.full_name,
-                    'email': user.email,
-                    'phone_number': user.phone_number
-                },
-                'products': [{'id': p.id, 'name': p.name, 'amount': amount, 'price': p.price} for p, amount in products_list],
-                'purchase_amount': order.purchase_amount,
-                'type': 'take away' if order.type == b'\x01' else 'dine in'
-            }
+            total_price += product.price * quantity
+
+    
+        for product_id, quantity in products:
+            product = Product.objects.get(id=product_id)
+            Storage.objects.filter(name='sugar').update(amount=models.F('amount') - product.sugar * quantity)
+            Storage.objects.filter(name='coffee').update(amount=models.F('amount') - product.coffee * quantity)
+            Storage.objects.filter(name='flour').update(amount=models.F('amount') - product.flour * quantity)
+            Storage.objects.filter(name='chocolate').update(amount=models.F('amount') - product.chocolate * quantity)
+
+
+        order = cls.objects.create(
+            username=username,
+            products=json.dumps(products),
+            purchase_amount=total_price,
+            order_type=order_type
+        )
+
+        UserOrder.objects.create(user=User, order=Order)
+        for product_id, quantity in products:
+            OrderProduct.objects.create(order=order, product_id=product_id, quantity=quantity)
+        
+        return True, 'Order placed successfully.'
 
 class Admin(models.Model):
     username = models.CharField(max_length=255, primary_key=True)
