@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
-from .models import Product, Order, Storage, User, Admin, OrderProduct
+from .models import Product, Order, Storage, User, Admin, OrderProduct,UserOrder
 from .forms import UserRegistrationForm, UserLoginForm, CartForm, OrderForm, ProductFilterForm
 from django.db.models import Count
 
@@ -97,3 +97,24 @@ def homepage_view(request):
     products_with_sales = [{'product': product, 'total_sales': product_sales_dict[product.id]} for product in products]
 
     return render(request, 'homepage.html', {'is_admin': is_admin, 'products_with_sales': products_with_sales})
+
+
+@login_required
+def purchase_records_view(request):
+    user_orders = UserOrder.objects.filter(user=request.user)
+    orders = []
+
+    for user_order in user_orders:
+        order = user_order.order
+        order_products = OrderProduct.objects.filter(order=order)
+        products = [{'product': order_product.product, 'quantity': 1} for order_product in order_products]
+
+        orders.append({
+            'order_id': order.id,
+            'purchase_amount': order.purchase_amount,
+            'type': 'take away' if order.type == b'\x01' else 'dine in',
+            'products': products,
+            'order_date': order.created_at
+        })
+
+    return render(request, 'purchase_records.html', {'orders': orders})
