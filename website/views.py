@@ -80,3 +80,7 @@ def product_list_view(request):
                 products = products.filter(name__icontains='shake')
 
     return render(request, 'product_list.html', {'form': form, 'products': products})
+
+def homepage_view(request):
+    is_admin = request.user.is_authenticated and Admin.objects.filter(username=request.user.username).exists()
+    return render(request, 'homepage.html', {'is_admin': is_admin})
