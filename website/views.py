@@ -2,8 +2,9 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from .models import Product, Order, Storage, User, Admin, OrderProduct,UserOrder
-from .forms import UserRegistrationForm, UserLoginForm, CartForm, OrderForm, ProductFilterForm
+from .forms import UserRegistrationForm, UserLoginForm, CartForm, OrderForm, ProductFilterForm, AddProductForm, UpdateStorageForm
 from django.db.models import Count
+from .decorators import admin_required
 
 def register(request):
     if request.method == 'POST':
@@ -118,3 +119,41 @@ def purchase_records_view(request):
         })
 
     return render(request, 'purchase_records.html', {'orders': orders})
+
+@login_required
+@admin_required
+def add_product_view(request):
+    if request.method == 'POST':
+        form = AddProductForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            Product.add_product(
+                name=data['name'],
+                sugar=data['sugar'],
+                coffee=data['coffee'],
+                flour=data['flour'],
+                chocolate=data['chocolate'],
+                vertical=data['vertical'],
+                price=data['price']
+            )
+            return redirect('product_list')  # Replace with the name of your product list view
+    else:
+        form = AddProductForm()
+    return render(request, 'add_product.html', {'form': form})
+
+@login_required
+@admin_required
+def update_storage_view(request):
+    if request.method == 'POST':
+        form = UpdateStorageForm(request.POST)
+        if form.is_valid():
+            ingredient_name = form.cleaned_data['ingredient_name']
+            quantity = form.cleaned_data['quantity']
+            result = Storage.update_storage(ingredient_name, quantity)
+            if result['status'] == 'success':
+                return redirect('storage_list')  # Replace with the name of your storage list view
+            else:
+                form.add_error(None, result['message'])
+    else:
+        form = UpdateStorageForm()
+    return render(request, 'update_storage.html', {'form': form})
