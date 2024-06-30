@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
-from .models import Product, Order, Storage, User
+from .models import Product, Order, Storage, User, Admin, OrderProduct
 from .forms import UserRegistrationForm, UserLoginForm, CartForm, OrderForm, ProductFilterForm
 from django.db.models import Count
 
@@ -84,4 +84,16 @@ def product_list_view(request):
 
 def homepage_view(request):
     is_admin = request.user.is_authenticated and Admin.objects.filter(username=request.user.username).exists()
-    return render(request, 'homepage.html', {'is_admin': is_admin})
+
+    most_sold_products = (OrderProduct.objects.values('product_id')
+                          .annotate(total_sales=Count('product_id'))
+                          .order_by('-total_sales')[:12])
+
+    product_ids = [item['product_id'] for item in most_sold_products]
+    products = Product.objects.filter(id__in=product_ids)
+
+    product_sales_dict = {item['product_id']: item['total_sales'] for item in most_sold_products}
+
+    products_with_sales = [{'product': product, 'total_sales': product_sales_dict[product.id]} for product in products]
+
+    return render(request, 'homepage.html', {'is_admin': is_admin, 'products_with_sales': products_with_sales})
