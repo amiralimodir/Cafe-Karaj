@@ -40,3 +40,12 @@ class AddProductForm(forms.Form):
 class UpdateStorageForm(forms.Form):
     ingredient_name = forms.CharField(max_length=255)
     quantity = forms.IntegerField()
+
+class ProductFilterForm(forms.Form):
+    CATEGORY_CHOICES = [
+        ('cold_drink', 'Cold Drink'),
+        ('hot_drink', 'Hot Drink'),
+        ('cake', 'Cake'),
+        ('shake', 'Shake'),
+    ]
+    category = forms.ChoiceField(choices=CATEGORY_CHOICES, required=False, label='Category')
