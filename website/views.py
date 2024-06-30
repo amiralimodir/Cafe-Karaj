@@ -5,6 +5,7 @@ from .models import Product, Order, Storage, User, Admin, OrderProduct,UserOrder
 from .forms import UserRegistrationForm, UserLoginForm, CartForm, OrderForm, ProductFilterForm, AddProductForm, UpdateStorageForm
 from django.db.models import Count
 from .decorators import admin_required
+import datetime
 
 def register(request):
     if request.method == 'POST':
@@ -157,3 +158,27 @@ def update_storage_view(request):
     else:
         form = UpdateStorageForm()
     return render(request, 'update_storage.html', {'form': form})
+
+
+
+@login_required
+@admin_required
+def management_dashboard_view(request):
+
+    sales_data = (
+        OrderProduct.objects.values('product__name')
+        .annotate(sales_count=Count('product'))
+        .order_by('-sales_count')[:10]
+    )
+
+    products = Product.objects.all()
+    sales_chart_data = {
+        'labels': [data['product__name'] for data in sales_data],
+        'data': [data['sales_count'] for data in sales_data],
+    }
+
+    context = {
+        'products': products,
+        'sales_chart_data': sales_chart_data,
+    }
+    return render(request, 'management_dashboard.html', context)
