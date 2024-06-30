@@ -1,8 +1,9 @@
 from django.urls import path
-from .views import register, login_view , cart_view, product_list_view, update_storage_view, add_product_view, purchase_records_view, homepage_view
+from .views import register, login_view , cart_view, product_list_view, update_storage_view, add_product_view, purchase_records_view, unauthenticated_homepage_view, authenticated_homepage_view
 
 urlpatterns = [
-    path('', homepage_view, name='homepage'),
+    path('', unauthenticated_homepage_view, name='unauthenticated_homepage'),
+    path('home/', authenticated_homepage_view, name='authenticated_homepage'),
     path('register/', register, name='register'),
     path('login/', login_view, name='login'),
     path('cart/', cart_view, name='cart'),

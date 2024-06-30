@@ -66,6 +66,7 @@ def cart_view(request):
         'order_form': order_form
     })
 
+@login_required
 def product_list_view(request):
     form = ProductFilterForm(request.GET or None)
     products = Product.objects.all()
@@ -84,8 +85,14 @@ def product_list_view(request):
 
     return render(request, 'product_list.html', {'form': form, 'products': products})
 
-def homepage_view(request):
-    is_admin = request.user.is_authenticated and Admin.objects.filter(username=request.user.username).exists()
+def unauthenticated_homepage_view(request):
+    if request.user.is_authenticated:
+        return redirect('authenticated_homepage')
+    return render(request, 'unauthenticated_homepage.html')
+
+@login_required
+def authenticated_homepage_view(request):
+    is_admin = Admin.objects.filter(username=request.user.username).exists()
 
     most_sold_products = (OrderProduct.objects.values('product_id')
                           .annotate(total_sales=Count('product_id'))
@@ -98,7 +105,12 @@ def homepage_view(request):
 
     products_with_sales = [{'product': product, 'total_sales': product_sales_dict[product.id]} for product in products]
 
-    return render(request, 'homepage.html', {'is_admin': is_admin, 'products_with_sales': products_with_sales})
+    return render(request, 'authenticated_homepage.html', {
+        'is_admin': is_admin,
+        'products_with_sales': products_with_sales
+    })
+
+
 
 
 @login_required
