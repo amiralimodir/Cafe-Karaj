@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
-from .models import Product, Order, Storage, User, Admin, OrderProduct
-from .forms import UserRegistrationForm, UserLoginForm, CartForm, OrderForm, ProductFilterForm
+from .models import Product, Order, Storage, User, Admin, OrderProduct,UserOrder
+from .forms import UserRegistrationForm, UserLoginForm, CartForm, OrderForm, ProductFilterForm, AddProductForm, UpdateStorageForm
 from django.db.models import Count
+from .decorators import admin_required
+import datetime
 
 def register(request):
     if request.method == 'POST':
@@ -97,3 +99,86 @@ def homepage_view(request):
     products_with_sales = [{'product': product, 'total_sales': product_sales_dict[product.id]} for product in products]
 
     return render(request, 'homepage.html', {'is_admin': is_admin, 'products_with_sales': products_with_sales})
+
+
+@login_required
+def purchase_records_view(request):
+    user_orders = UserOrder.objects.filter(user=request.user)
+    orders = []
+
+    for user_order in user_orders:
+        order = user_order.order
+        order_products = OrderProduct.objects.filter(order=order)
+        products = [{'product': order_product.product, 'quantity': 1} for order_product in order_products]
+
+        orders.append({
+            'order_id': order.id,
+            'purchase_amount': order.purchase_amount,
+            'type': 'take away' if order.type == b'\x01' else 'dine in',
+            'products': products,
+            'order_date': order.created_at
+        })
+
+    return render(request, 'purchase_records.html', {'orders': orders})
+
+@login_required
+@admin_required
+def add_product_view(request):
+    if request.method == 'POST':
+        form = AddProductForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            Product.add_product(
+                name=data['name'],
+                sugar=data['sugar'],
+                coffee=data['coffee'],
+                flour=data['flour'],
+                chocolate=data['chocolate'],
+                vertical=data['vertical'],
+                price=data['price']
+            )
+            return redirect('product_list')  # Replace with the name of your product list view
+    else:
+        form = AddProductForm()
+    return render(request, 'add_product.html', {'form': form})
+
+@login_required
+@admin_required
+def update_storage_view(request):
+    if request.method == 'POST':
+        form = UpdateStorageForm(request.POST)
+        if form.is_valid():
+            ingredient_name = form.cleaned_data['ingredient_name']
+            quantity = form.cleaned_data['quantity']
+            result = Storage.update_storage(ingredient_name, quantity)
+            if result['status'] == 'success':
+                return redirect('storage_list')  # Replace with the name of your storage list view
+            else:
+                form.add_error(None, result['message'])
+    else:
+        form = UpdateStorageForm()
+    return render(request, 'update_storage.html', {'form': form})
+
+
+
+@login_required
+@admin_required
+def management_dashboard_view(request):
+
+    sales_data = (
+        OrderProduct.objects.values('product__name')
+        .annotate(sales_count=Count('product'))
+        .order_by('-sales_count')[:10]
+    )
+
+    products = Product.objects.all()
+    sales_chart_data = {
+        'labels': [data['product__name'] for data in sales_data],
+        'data': [data['sales_count'] for data in sales_data],
+    }
+
+    context = {
+        'products': products,
+        'sales_chart_data': sales_chart_data,
+    }
+    return render(request, 'management_dashboard.html', context)
