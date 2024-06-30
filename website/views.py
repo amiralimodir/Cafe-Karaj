@@ -3,6 +3,7 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from .models import Product, Order, Storage, User
 from .forms import UserRegistrationForm, UserLoginForm, CartForm, OrderForm, ProductFilterForm
+from django.db.models import Count
 
 def register(request):
     if request.method == 'POST':
