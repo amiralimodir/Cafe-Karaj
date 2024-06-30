@@ -26,3 +26,17 @@ class OrderForm(forms.ModelForm):
         labels = {
             'order_type': 'Order Type'
         }
+
+
+class AddProductForm(forms.Form):
+    name = forms.CharField(max_length=255)
+    sugar = forms.IntegerField()
+    coffee = forms.IntegerField()
+    flour = forms.IntegerField()
+    chocolate = forms.IntegerField()
+    vertical = forms.BooleanField()
+    price = forms.IntegerField()
+
+class UpdateStorageForm(forms.Form):
+    ingredient_name = forms.CharField(max_length=255)
+    quantity = forms.IntegerField()
