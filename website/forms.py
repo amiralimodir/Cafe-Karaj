@@ -26,3 +26,26 @@ class OrderForm(forms.ModelForm):
         labels = {
             'order_type': 'Order Type'
         }
+
+
+class AddProductForm(forms.Form):
+    name = forms.CharField(max_length=255)
+    sugar = forms.IntegerField()
+    coffee = forms.IntegerField()
+    flour = forms.IntegerField()
+    chocolate = forms.IntegerField()
+    vertical = forms.BooleanField()
+    price = forms.IntegerField()
+
+class UpdateStorageForm(forms.Form):
+    ingredient_name = forms.CharField(max_length=255)
+    quantity = forms.IntegerField()
+
+class ProductFilterForm(forms.Form):
+    CATEGORY_CHOICES = [
+        ('cold_drink', 'Cold Drink'),
+        ('hot_drink', 'Hot Drink'),
+        ('cake', 'Cake'),
+        ('shake', 'Shake'),
+    ]
+    category = forms.ChoiceField(choices=CATEGORY_CHOICES, required=False, label='Category')
