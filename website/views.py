@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from .models import Product, Order, Storage, User
-from .forms import UserRegistrationForm, UserLoginForm, CartForm, OrderForm
+from .forms import UserRegistrationForm, UserLoginForm, CartForm, OrderForm, ProductFilterForm
 
 def register(request):
     if request.method == 'POST':
@@ -62,3 +62,21 @@ def cart_view(request):
         'cart_form': cart_form,
         'order_form': order_form
     })
+
+def product_list_view(request):
+    form = ProductFilterForm(request.GET or None)
+    products = Product.objects.all()
+
+    if form.is_valid():
+        category = form.cleaned_data.get('category')
+        if category:
+            if category == 'cold_drink':
+                products = products.filter(vertical=True)
+            elif category == 'hot_drink':
+                products = products.filter(vertical=False)
+            elif category == 'cake':
+                products = products.filter(name__icontains='cake')
+            elif category == 'shake':
+                products = products.filter(name__icontains='shake')
+
+    return render(request, 'product_list.html', {'form': form, 'products': products})
