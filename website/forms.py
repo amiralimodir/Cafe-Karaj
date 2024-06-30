@@ -36,6 +36,7 @@ class AddProductForm(forms.Form):
     chocolate = forms.IntegerField()
     vertical = forms.BooleanField()
     price = forms.IntegerField()
+    image = forms.ImageField()
 
 class UpdateStorageForm(forms.Form):
     ingredient_name = forms.CharField(max_length=255)

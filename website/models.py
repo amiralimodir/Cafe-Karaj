@@ -21,12 +21,13 @@ class Product(models.Model):
     chocolate = models.IntegerField()
     vertical = models.BinaryField()
     price = models.IntegerField()
+    image = models.ImageField(upload_to='products/', null=True, blank=True)
 
     def __str__(self):
         return self.name
     
     @classmethod
-    def add_product(cls, name, sugar, coffee, flour, chocolate, vertical, price):
+    def add_product(cls, name, sugar, coffee, flour, chocolate, vertical, price, image):
         product = cls(
             name=name,
             sugar=sugar,
@@ -34,7 +35,8 @@ class Product(models.Model):
             flour=flour,
             chocolate=chocolate,
             vertical=vertical,
-            price=price
+            price=price,
+            image=image
         )
         product.save()
         return product
