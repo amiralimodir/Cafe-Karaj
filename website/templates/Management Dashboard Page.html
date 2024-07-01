@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Management Dashboard{% endblock %}
+
+{% block content %}
+<h2>Management Dashboard</h2>
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        <h4>Sales Data</h4>
+        <canvas id="salesChart"></canvas>
+    </div>
+    <div class="col-md-6">
+        <h4>Inventory</h4>
+        <ul class="list-group">
+            {% for product in products %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ product.name }}
+                <span class="badge badge-primary badge-pill">{{ product.count_products_based_on_stock }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var ctx = document.getElementById('salesChart').getContext('2d');
+        var salesChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {{ sales_chart_data.labels|safe }},
+                datasets: [{
+                    label: 'Sales Count',
+                    data: {{ sales_chart_data.data|safe }},
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

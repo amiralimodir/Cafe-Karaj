@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Products{% endblock %}
+
+{% block content %}
+<h2>Products</h2>
+<form method="get" class="form-inline mb-3">
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Filter</button>
+</form>
+<div class="row">
+    {% for product in products %}
+    <div class="col-md-3">
+        <div class="card mb-4 shadow-sm">
+            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+            <div class="card-body">
+                <h5 class="card-title">{{ product.name }}</h5>
+                <p class="card-text">Price: {{ product.price }}</p>
+                <a href="#" class="btn btn-primary">Add to Cart</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
