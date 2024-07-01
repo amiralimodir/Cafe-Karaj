@@ -16,7 +16,7 @@ def register(request):
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
             login(request, user)
-            return redirect('home')
+            return redirect('authenticated_homepage')
     else:
         form = UserRegistrationForm()
     return render(request, 'register.html', {'form': form})
@@ -27,7 +27,7 @@ def login_view(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            return redirect('home')
+            return redirect('authenticated_homepage')
     else:
         form = UserLoginForm()
     return render(request, 'login.html', {'form': form})
