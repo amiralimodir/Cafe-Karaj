@@ -1,106 +1,95 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cafe Karaj</title>
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-    />
-    <link rel="stylesheet" href="{% static 'css/login css.css' %}" />
-  </head>
-  <body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+<body>
     <div class="main-container">
-      <div class="navigation">
-        <div class="cafe-karaj">
-          <a href="{% url 'unauthenticated_homepage' %}">
-            <span class="cafe">cafe</span><span class="nbsp"> </span><span class="karaj">Karaj</span>
-          </a>
+        <div class="navigation">
+            <a href="{% url 'unauthenticated_homepage' %}" class="cafe-karaj">
+                <span class="cafe">cafe</span><span class="nbsp"> </span><span class="karaj">Karaj</span>
+            </a>
         </div>
-      </div>
-      <div class="signup-form">
-        <div class="copy">
-          <span class="log-in-1">log in</span>
-          <span class="enter-email-password">Enter your email or username & Password to Log in</span>
+        <div class="signup-form">
+            <div class="copy">
+                <span class="log-in-1">Log in</span>
+                <span class="enter-email-password">Enter your email or username & Password to Log in</span>
+            </div>
+            <div class="input-button">
+                <form method="POST" action="{% url 'login' %}">
+                    {% csrf_token %}
+                    <div class="field">
+                        <input class="field-input" type="text" name="username_or_email" required />
+                        <span class="email-username">Email or Username</span>
+                    </div>
+                    <div class="field">
+                        <input class="field-input" type="password" name="password" required />
+                        <span class="email-username">Password</span>
+                    </div>
+                    <button class="login-button" type="submit">
+                        <span class="login-text">Log in</span>
+                    </button>
+                </form>
+            </div>
+            <div class="divider">
+                <div class="rectangle"></div>
+                <span class="continue-with-text">or continue with</span>
+                <div class="rectangle-3"></div>
+            </div>
+            <a href="{% url 'register' %}" class="signup-button">
+                <span class="signup-text">Sign up</span>
+            </a>
+            <div class="terms-service-privacy">
+                <span class="click-agree-continue">By clicking continue, you agree to our </span>
+                <span class="terms-service">Terms of Service</span>
+                <span class="click-agree-continue-4"> and </span>
+                <span class="terms-service-5">Privacy Policy</span>
+            </div>
         </div>
-        <div class="input-button">
-          <form method="POST" action="{% url 'login' %}">
-            {% csrf_token %}
-            <div class="field">
-              <input class="field-input" type="text" name="username" required />
-              <span class="email-username">Email or Username</span>
+        <div class="navigation-footer">
+            <div class="divider-6"></div>
+            <div class="flex-row-f">
+                <div class="regroup">
+                    <div class="items">
+                        <span class="topic">Topic</span><span class="page">Page</span><span class="page-7">Page</span><span class="page-8">Page</span>
+                    </div>
+                    <div class="items-9">
+                        <span class="topic-a">Topic</span><span class="page-b">Page</span><span class="page-c">Page</span><span class="page-d">Page</span>
+                    </div>
+                    <div class="items-e">
+                        <span class="topic-f">Topic</span><span class="page-10">Page</span><span class="page-11">Page</span><span class="page-12">Page</span>
+                    </div>
+                </div>
+                <span class="cafe-karaj-13">Cafe Karaj</span>
+                <div class="social-icons">
+                    <div class="buttons-icon">
+                        <div class="icon">
+                            <div class="icon-14"></div>
+                        </div>
+                    </div>
+                    <div class="buttons-icon-15">
+                        <div class="icon-16">
+                            <div class="icon-17"></div>
+                        </div>
+                    </div>
+                    <div class="buttons-icon-18">
+                        <div class="icon-19">
+                            <div class="icon-1a"></div>
+                        </div>
+                    </div>
+                    <div class="buttons-icon-1b">
+                        <div class="icon-1c">
+                            <div class="icon-1d"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="field">
-              <input class="field-input" type="password" name="password" required />
-              <span class="email-username">Password</span>
-            </div>
-            <button class="login-button" type="submit">
-              <span class="login-text">Log in</span>
-            </button>
-          </form>
-          <form method="POST" action="{% url 'admin:login' %}">
-            {% csrf_token %}
-            <button class="login-button-2" type="submit">
-              <span class="admin-login-text">Log in as Admin</span>
-            </button>
-          </form>
         </div>
-        <div class="divider">
-          <div class="rectangle"></div>
-          <span class="continue-with-text">or continue with</span>
-          <div class="rectangle-3"></div>
-        </div>
-        <a href="{% url 'register' %}" class="signup-button">
-          <span class="signup-text">Sign up</span>
-        </a>
-        <div class="terms-service-privacy">
-          <span class="click-agree-continue">By clicking continue, you agree to our </span>
-          <span class="terms-service">Terms of Service</span>
-          <span class="click-agree-continue-4"> and </span>
-          <span class="terms-service-5">Privacy Policy</span>
-        </div>
-      </div>
-      <div class="navigation-footer">
-        <div class="divider-6"></div>
-        <div class="flex-row-f">
-          <div class="regroup">
-            <div class="items">
-              <span class="topic">Topic</span><span class="page">Page</span><span class="page-7">Page</span><span class="page-8">Page</span>
-            </div>
-            <div class="items-9">
-              <span class="topic-a">Topic</span><span class="page-b">Page</span><span class="page-c">Page</span><span class="page-d">Page</span>
-            </div>
-            <div class="items-e">
-              <span class="topic-f">Topic</span><span class="page-10">Page</span><span class="page-11">Page</span><span class="page-12">Page</span>
-            </div>
-          </div>
-          <span class="cafe-karaj-13">Cafe Karaj</span>
-          <div class="social-icons">
-            <div class="buttons-icon">
-              <div class="icon">
-                <div class="icon-14"></div>
-              </div>
-            </div>
-            <div class="buttons-icon-15">
-              <div class="icon-16">
-                <div class="icon-17"></div>
-              </div>
-            </div>
-            <div class="buttons-icon-18">
-              <div class="icon-19">
-                <div class="icon-1a"></div>
-              </div>
-            </div>
-            <div class="buttons-icon-1b">
-              <div class="icon-1c">
-                <div class="icon-1d"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
-  </body>
+</body>
 </html>
