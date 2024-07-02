@@ -151,22 +151,14 @@ def purchase_records_view(request):
 @admin_required
 def add_product_view(request):
     if request.method == 'POST':
-        form = AddProductForm(request.POST)
+        form = AddProductForm(request.POST, request.FILES)
         if form.is_valid():
-            data = form.cleaned_data
-            Product.add_product(
-                name=data['name'],
-                sugar=data['sugar'],
-                coffee=data['coffee'],
-                flour=data['flour'],
-                chocolate=data['chocolate'],
-                vertical=data['vertical'],
-                price=data['price']
-            )
-            return redirect('products')  
+            form.save()
+            return redirect('product_list')
     else:
         form = AddProductForm()
     return render(request, 'add_product.html', {'form': form})
+
 
 @login_required
 @admin_required
@@ -178,7 +170,7 @@ def update_storage_view(request):
             quantity = form.cleaned_data['quantity']
             result = Storage.update_storage(ingredient_name, quantity)
             if result['status'] == 'success':
-                return redirect('storage_list')  # Replace with the name of your storage list view
+                return redirect('storage_list')
             else:
                 form.add_error(None, result['message'])
     else:

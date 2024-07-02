@@ -1,0 +1,173 @@
+/* add_product.css */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+}
+
+.main-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    background-color: #fff;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.cafe-karaj a {
+    text-decoration: none;
+    font-size: 24px;
+    color: #333;
+}
+
+.cafe {
+    font-weight: 700;
+}
+
+.karaj {
+    font-weight: 400;
+}
+
+.add-product-form {
+    background-color: #fff;
+    padding: 40px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    margin-top: 40px;
+}
+
+.copy {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.add-product-title {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.enter-product-details {
+    font-size: 16px;
+    color: #777;
+}
+
+.input-button {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.field {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.field-input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #eaeaea;
+    border-radius: 4px;
+    outline: none;
+}
+
+.field-input:focus {
+    border-color: #333;
+}
+
+.label {
+    position: absolute;
+    top: -10px;
+    left: 10px;
+    background: #fff;
+    padding: 0 5px;
+    font-size: 12px;
+    color: #777;
+}
+
+.add-product-button {
+    width: 100%;
+    padding: 15px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.add-product-button:hover {
+    background-color: #555;
+}
+
+.navigation-footer {
+    margin-top: 60px;
+    background-color: #fff;
+    padding: 20px;
+    border-top: 1px solid #eaeaea;
+}
+
+.divider {
+    height: 1px;
+    background-color: #eaeaea;
+    margin: 20px 0;
+}
+
+.flex-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.regroup {
+    display: flex;
+}
+
+.items, .items-9, .items-e {
+    margin-right: 20px;
+}
+
+.items span, .items-9 span, .items-e span {
+    display: block;
+    color: #777;
+    margin-bottom: 5px;
+}
+
+.cafe-karaj-13 {
+    font-size: 18px;
+    color: #333;
+}
+
+.social-icons {
+    display: flex;
+}
+
+.buttons-icon {
+    margin-right: 10px;
+}
+
+.icon {
+    width: 40px;
+    height: 40px;
+    background-color: #eaeaea;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.icon-14, .icon-16, .icon-19, .icon-1c {
+    width: 20px;
+    height: 20px;
+    background-color: #777;
+    border-radius: 50%;
+}

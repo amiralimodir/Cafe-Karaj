@@ -1,12 +1,74 @@
-{% extends 'base.html' %}
-
-{% block title %}Add Product{% endblock %}
-
-{% block content %}
-<h2>Add Product</h2>
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Add Product</button>
-</form>
-{% endblock %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product - Cafe Karaj</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="{% static 'css/add_product.css' %}">
+</head>
+<body>
+    <div class="main-container">
+        <div class="navigation">
+            <div class="cafe-karaj">
+                <a href="{% url 'unauthenticated_homepage' %}">
+                    <span class="cafe">cafe</span><span class="nbsp"> </span><span class="karaj">Karaj</span>
+                </a>
+            </div>
+        </div>
+        <div class="add-product-form">
+            <div class="copy">
+                <span class="add-product-title">Add New Product</span>
+                <span class="enter-product-details">Enter the details of the product you want to add</span>
+            </div>
+            <div class="input-button">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit">Add Product</button>
+                </form>
+            </div>
+            <div class="navigation-footer">
+                <div class="divider"></div>
+                <div class="flex-row">
+                    <div class="regroup">
+                        <div class="items">
+                            <span class="topic">Topic</span><span class="page">Page</span><span class="page-7">Page</span><span class="page-8">Page</span>
+                        </div>
+                        <div class="items-9">
+                            <span class="topic-a">Topic</span><span class="page-b">Page</span><span class="page-c">Page</span><span class="page-d">Page</span>
+                        </div>
+                        <div class="items-e">
+                            <span class="topic-f">Topic</span><span class="page-10">Page</span><span class="page-11">Page</span><span class="page-12">Page</span>
+                        </div>
+                    </div>
+                    <span class="cafe-karaj-13">Cafe Karaj</span>
+                    <div class="social-icons">
+                        <div class="buttons-icon">
+                            <div class="icon">
+                                <div class="icon-14"></div>
+                            </div>
+                        </div>
+                        <div class="buttons-icon-15">
+                            <div class="icon-16">
+                                <div class="icon-17"></div>
+                            </div>
+                        </div>
+                        <div class="buttons-icon-18">
+                            <div class="icon-19">
+                                <div class="icon-1a"></div>
+                            </div>
+                        </div>
+                        <div class="buttons-icon-1b">
+                            <div class="icon-1c">
+                                <div class="icon-1d"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

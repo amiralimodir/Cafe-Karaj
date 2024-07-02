@@ -27,13 +27,22 @@ class User(AbstractUser):
     REQUIRED_FIELDS = ['email', 'full_name', 'phone_number']
 
 class Product(models.Model):
+    VERTICAL_CHOICES = [
+        ('cold_drinks', 'Cold Drinks'),
+        ('hot_drinks', 'Hot Drinks'),
+        ('cake', 'Cake'),
+        ('shake', 'Shake'),
+    ]
+
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     sugar = models.IntegerField()
     coffee = models.IntegerField()
     flour = models.IntegerField()
+    egg = models.IntegerField(default=0)
+    milk = models.IntegerField(default=0)
     chocolate = models.IntegerField()
-    vertical = models.BinaryField()
+    vertical_type = models.CharField(max_length=50, choices=VERTICAL_CHOICES, default='hot_drinks')
     price = models.IntegerField()
     image = models.ImageField(upload_to='products/', null=True, blank=True)
 
@@ -41,12 +50,14 @@ class Product(models.Model):
         return self.name
     
     @classmethod
-    def add_product(cls, name, sugar, coffee, flour, chocolate, vertical, price, image):
+    def add_product(cls, name, sugar, coffee, flour, egg, milk, chocolate, vertical, price, image):
         product = cls(
             name=name,
             sugar=sugar,
             coffee=coffee,
             flour=flour,
+            egg=egg,
+            milk=milk,
             chocolate=chocolate,
             vertical=vertical,
             price=price,

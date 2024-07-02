@@ -32,15 +32,11 @@ class OrderForm(forms.ModelForm):
         }
 
 
-class AddProductForm(forms.Form):
-    name = forms.CharField(max_length=255)
-    sugar = forms.IntegerField()
-    coffee = forms.IntegerField()
-    flour = forms.IntegerField()
-    chocolate = forms.IntegerField()
-    vertical = forms.BooleanField()
-    price = forms.IntegerField()
-    image = forms.ImageField()
+class AddProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ['name', 'sugar', 'coffee', 'flour', 'egg', 'milk', 'chocolate', 'vertical_type', 'price', 'image']
+
 
 class UpdateStorageForm(forms.Form):
     ingredient_name = forms.CharField(max_length=255)

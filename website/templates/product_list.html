@@ -1,25 +1,52 @@
-{% extends 'base.html' %}
-
-{% block title %}Products{% endblock %}
-
-{% block content %}
-<h2>Products</h2>
-<form method="get" class="form-inline mb-3">
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Filter</button>
-</form>
-<div class="row">
-    {% for product in products %}
-    <div class="col-md-3">
-        <div class="card mb-4 shadow-sm">
-            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
-            <div class="card-body">
-                <h5 class="card-title">{{ product.name }}</h5>
-                <p class="card-text">Price: {{ product.price }}</p>
-                <a href="#" class="btn btn-primary">Add to Cart</a>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product List</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/product_list.css' %}">
+</head>
+<body>
+    <div class="main-container">
+        <div class="navigation">
+            <div class="cafe-karaj">
+                <a href="{% url 'unauthenticated_homepage' %}">
+                    <span class="cafe">cafe</span><span class="nbsp"> </span><span class="karaj">Karaj</span>
+                </a>
+            </div>
+        </div>
+        <div class="product-list-container">
+            <div class="filters">
+                <h2>Filter by Category</h2>
+                <form method="GET" action="{% url 'product_list' %}">
+                    <label>
+                        <input type="checkbox" name="vertical" value="cold drinks" {% if 'cold drinks' in request.GET.vertical %}checked{% endif %}> Cold Drinks
+                    </label>
+                    <label>
+                        <input type="checkbox" name="vertical" value="hot drinks" {% if 'hot drinks' in request.GET.vertical %}checked{% endif %}> Hot Drinks
+                    </label>
+                    <label>
+                        <input type="checkbox" name="vertical" value="cake" {% if 'cake' in request.GET.vertical %}checked{% endif %}> Cake
+                    </label>
+                    <label>
+                        <input type="checkbox" name="vertical" value="shake" {% if 'shake' in request.GET.vertical %}checked{% endif %}> Shake
+                    </label>
+                    <button type="submit">Apply Filters</button>
+                </form>
+            </div>
+            <div class="product-list">
+                {% for product in products %}
+                    <div class="product-card">
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        <h3>{{ product.name }}</h3>
+                        <p>{{ product.description }}</p>
+                        <p><strong>${{ product.price }}</strong></p>
+                    </div>
+                {% endfor %}
             </div>
         </div>
     </div>
-    {% endfor %}
-</div>
-{% endblock %}
+</body>
+</html>

@@ -1,0 +1,122 @@
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+}
+
+.main-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    background-color: #fff;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.cafe-karaj a {
+    text-decoration: none;
+    font-size: 24px;
+    color: #333;
+}
+
+.cafe {
+    font-weight: 700;
+}
+
+.karaj {
+    font-weight: 400;
+}
+
+.product-list-container {
+    display: flex;
+    margin-top: 40px;
+}
+
+.filters {
+    width: 200px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.filters h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.filters label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #333;
+}
+
+.filters input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+.filters button {
+    width: 100%;
+    padding: 10px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.filters button:hover {
+    background-color: #555;
+}
+
+.product-list {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-left: 20px;
+}
+
+.product-card {
+    width: 30%;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    overflow: hidden;
+    text-align: center;
+    padding: 20px;
+}
+
+.product-card img {
+    width: 100%;
+    height: auto;
+    margin-bottom: 15px;
+}
+
+.product-card h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.product-card p {
+    font-size: 16px;
+    color: #777;
+    margin-bottom: 10px;
+}
+
+.product-card strong {
+    font-size: 18px;
+    color: #333;
+}
