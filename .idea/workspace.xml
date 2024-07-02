@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="469cd0f4-c19a-486d-b658-816802b60041" name="Changes" comment="" />
+    <list default="true" id="469cd0f4-c19a-486d-b658-816802b60041" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/website/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/website/urls.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -38,7 +42,7 @@
     &quot;RunOnceActivity.OpenDjangoStructureViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;django.template.preview.state&quot;: &quot;SHOW_EDITOR_AND_PREVIEW&quot;,
+    &quot;django.template.preview.state&quot;: &quot;SHOW_EDITOR&quot;,
     &quot;git-widget-placeholder&quot;: &quot;Develop&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/M24SOU/Documents/GitHub/Cafe-Karaj/website/static/images&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
@@ -103,6 +107,8 @@
       <workItem from="1719749868472" duration="656000" />
       <workItem from="1719811286032" duration="14350000" />
       <workItem from="1719835859716" duration="13091000" />
+      <workItem from="1719895912334" duration="4660000" />
+      <workItem from="1719904179064" duration="81000" />
     </task>
     <servers />
   </component>

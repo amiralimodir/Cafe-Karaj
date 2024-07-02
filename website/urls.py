@@ -11,7 +11,5 @@ urlpatterns = [
     path('update_storage/', update_storage_view, name='update_storage'),
     path('products/', product_list_view, name='product_list'),
     path('purchase_records/', purchase_records_view, name='purchase_records'),
-    
-
 
 ]
