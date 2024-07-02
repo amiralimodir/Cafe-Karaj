@@ -15,7 +15,9 @@
     <div class="main-container">
       <div class="navigation">
         <div class="cafe-karaj">
-          <span class="cafe">cafe</span><span class="nbsp"> </span><span class="karaj">Karaj</span>
+          <a href="{% url 'unauthenticated_homepage' %}">
+            <span class="cafe">cafe</span><span class="nbsp"> </span><span class="karaj">Karaj</span>
+          </a>
         </div>
       </div>
       <div class="signup-form">
@@ -24,28 +26,35 @@
           <span class="enter-email-password">Enter your email or username & Password to Log in</span>
         </div>
         <div class="input-button">
-          <div class="field">
-            <input class="field-input" />
-            <span class="email-username">Email or Username</span>
-          </div>
-          <button class="button-field">
-            <span class="password-label">******************</span>
-          </button>
-          <button class="login-button">
-            <span class="login-text">Log in</span>
-          </button>
-          <button class="login-button-2">
-            <span class="admin-login-text">Log in as Admin</span>
-          </button>
+          <form method="POST" action="{% url 'login' %}">
+            {% csrf_token %}
+            <div class="field">
+              <input class="field-input" type="text" name="username" required />
+              <span class="email-username">Email or Username</span>
+            </div>
+            <div class="field">
+              <input class="field-input" type="password" name="password" required />
+              <span class="email-username">Password</span>
+            </div>
+            <button class="login-button" type="submit">
+              <span class="login-text">Log in</span>
+            </button>
+          </form>
+          <form method="POST" action="{% url 'admin:login' %}">
+            {% csrf_token %}
+            <button class="login-button-2" type="submit">
+              <span class="admin-login-text">Log in as Admin</span>
+            </button>
+          </form>
         </div>
         <div class="divider">
           <div class="rectangle"></div>
           <span class="continue-with-text">or continue with</span>
           <div class="rectangle-3"></div>
         </div>
-        <button class="signup-button">
+        <a href="{% url 'register' %}" class="signup-button">
           <span class="signup-text">Sign up</span>
-        </button>
+        </a>
         <div class="terms-service-privacy">
           <span class="click-agree-continue">By clicking continue, you agree to our </span>
           <span class="terms-service">Terms of Service</span>
