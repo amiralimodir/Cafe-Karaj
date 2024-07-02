@@ -1,16 +1,30 @@
+from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models, transaction, IntegrityError
 from django.db.models import F
 import json
 
-class User(models.Model):
-    username = models.CharField(max_length=255, primary_key=True)
+class User(AbstractUser):
+    email = models.EmailField(unique=True)
     full_name = models.CharField(max_length=255)
-    email = models.CharField(max_length=255)
-    password = models.CharField(max_length=255)
-    phone_number = models.IntegerField()
+    phone_number = models.CharField(max_length=15)
 
-    def __str__(self):
-        return self.username
+    groups = models.ManyToManyField(
+        Group,
+        related_name='website_user_set',  # Specify a custom related name
+        blank=True,
+        help_text='The groups this user belongs to.',
+        verbose_name='groups'
+    )
+    user_permissions = models.ManyToManyField(
+        Permission,
+        related_name='website_user_set',  # Specify a custom related name
+        blank=True,
+        help_text='Specific permissions for this user.',
+        verbose_name='user permissions'
+    )
+
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['email', 'full_name', 'phone_number']
 
 class Product(models.Model):
     id = models.AutoField(primary_key=True)
@@ -121,14 +135,6 @@ class Order(models.Model):
             OrderProduct.objects.create(order=order, product_id=product_id, quantity=quantity)
         
         return True, 'Order placed successfully.'
-
-class Admin(models.Model):
-    username = models.CharField(max_length=255, primary_key=True)
-    email = models.CharField(max_length=255)
-    password = models.CharField(max_length=255)
-
-    def __str__(self):
-        return self.username
 
 class Storage(models.Model):
     id = models.AutoField(primary_key=True)

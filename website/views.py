@@ -1,36 +1,50 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.decorators import login_required
-from .models import Product, Order, Storage, User, Admin, OrderProduct,UserOrder
-from .forms import UserRegistrationForm, UserLoginForm, CartForm, OrderForm, ProductFilterForm, AddProductForm, UpdateStorageForm
+from django.contrib.auth.views import LoginView
+from django.contrib.auth.forms import UserCreationForm
+from .models import Product, Order, Storage, OrderProduct,UserOrder, User
+from django.http import HttpResponse
+from .forms import CustomUserCreationForm, UserLoginForm, CartForm, OrderForm, ProductFilterForm, AddProductForm, UpdateStorageForm
 from django.db.models import Count
 from .decorators import admin_required
 import datetime
 
 def register(request):
     if request.method == 'POST':
-        form = UserRegistrationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            raw_password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=raw_password)
-            login(request, user)
-            return redirect('authenticated_homepage')
+        user_form = CustomUserCreationForm(request.POST)
+        if user_form.is_valid():
+            user = user_form.save()
+            return redirect('login')
     else:
-        form = UserRegistrationForm()
-    return render(request, 'register.html', {'form': form})
+        user_form = CustomUserCreationForm()
+    return render(request, 'register.html', {'user_form': user_form})
 
+    
 def login_view(request):
     if request.method == 'POST':
-        form = UserLoginForm(data=request.POST)
+        form = UserLoginForm(request.POST)
         if form.is_valid():
-            user = form.get_user()
-            login(request, user)
-            return redirect('authenticated_homepage')
+            username_or_email = form.cleaned_data.get('username_or_email')
+            password = form.cleaned_data.get('password')
+            user = authenticate(request, username=username_or_email, password=password)
+            if user is not None:
+                login(request, user)
+                if request.user.is_superuser:
+                    return redirect('management_dashboard')
+                else:
+                    return redirect('authenticated_homepage')
+            else:
+                return HttpResponse("Invalid login credentials")
     else:
         form = UserLoginForm()
     return render(request, 'login.html', {'form': form})
+
+@login_required
+def logout_view(request):
+    logout(request)
+    return redirect('unauthenticated_homepage')
 
 @login_required
 def cart_view(request):
@@ -92,7 +106,7 @@ def unauthenticated_homepage_view(request):
 
 @login_required
 def authenticated_homepage_view(request):
-    is_admin = Admin.objects.filter(username=request.user.username).exists()
+
 
     most_sold_products = (OrderProduct.objects.values('product_id')
                           .annotate(total_sales=Count('product_id'))
@@ -106,7 +120,7 @@ def authenticated_homepage_view(request):
     products_with_sales = [{'product': product, 'total_sales': product_sales_dict[product.id]} for product in products]
 
     return render(request, 'authenticated_homepage.html', {
-        'is_admin': is_admin,
+
         'products_with_sales': products_with_sales
     })
 
@@ -149,7 +163,7 @@ def add_product_view(request):
                 vertical=data['vertical'],
                 price=data['price']
             )
-            return redirect('product_list')  # Replace with the name of your product list view
+            return redirect('products')  
     else:
         form = AddProductForm()
     return render(request, 'add_product.html', {'form': form})

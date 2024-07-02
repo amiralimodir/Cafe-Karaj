@@ -1,18 +1,22 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .models import Product, Order, User
+from django.contrib.auth import get_user_model
 
-class UserRegistrationForm(UserCreationForm):
+User = get_user_model()
+
+class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True)
-    full_name = forms.CharField(max_length=255)
-    phone_number = forms.IntegerField()
+    full_name = forms.CharField(max_length=255, required=True)
+    phone_number = forms.CharField(max_length=15, required=True)
 
-    class Meta:
+    class Meta(UserCreationForm.Meta):
         model = User
-        fields = ['username', 'full_name', 'email', 'phone_number', 'password']
+        fields = ('username', 'email', 'full_name', 'phone_number', 'password1', 'password2')
 
-class UserLoginForm(AuthenticationForm):
-    username = forms.CharField(max_length=255)
+
+class UserLoginForm(forms.Form):
+    username_or_email = forms.CharField(label='Username or Email')
     password = forms.CharField(widget=forms.PasswordInput)
 
 class CartForm(forms.Form):
