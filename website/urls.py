@@ -12,7 +12,15 @@ urlpatterns = [
     path('update_storage/', update_storage_view, name='update_storage'),
     path('products/', product_list_view, name='product_list'),
     path('purchase_records/', purchase_records_view, name='purchase_records'),
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
     path('management_dashboard/', management_dashboard_view, name='management_dashboard')
 
+>>>>>>> 7d77ba5107e79d748be202d05026c64e157b3598
+=======
+    path('management_dashboard/', management_dashboard_view, name='management_dashboard')
+
+>>>>>>> bd026f01d02361bcb84caccc9c77abf1d258f950
 
 ]
