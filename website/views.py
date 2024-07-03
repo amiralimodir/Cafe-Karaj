@@ -56,19 +56,17 @@ def product_list_view(request):
     cart_form = CartForm()
 
     if filter_form.is_valid():
-        vertical_type = filter_form.cleaned_data.get('vertical_type')
-        if vertical_type:
-            products = products.filter(vertical_type__in=vertical_type)
+        verticals = filter_form.cleaned_data.get('verticals')
+        if verticals:
+            products = products.filter(vertical_type__in=verticals)
 
     if request.method == 'POST':
         cart_form = CartForm(request.POST)
         if cart_form.is_valid():
             cart_item = cart_form.save(commit=False)
+            cart_item.username = request.user.username
 
-            username = request.user.username
-            cart_item.username = username
-
-            existing_cart_item = Cart.objects.filter(username=username, product=cart_item.product).first()
+            existing_cart_item = Cart.objects.filter(username=cart_item.username, product=cart_item.product).first()
             if existing_cart_item:
                 existing_cart_item.quantity += cart_item.quantity
                 existing_cart_item.save()
@@ -152,17 +150,24 @@ def purchase_records_view(request):
 
     for order in user_orders:
         order_products = OrderProduct.objects.filter(order_id=order.id)
-        products = [{'product': order_product.product, 'quantity': 1} for order_product in order_products]
+        products = [
+            {
+                'product': Product.objects.get(id=order_product.product_id),
+                'quantity': order_product.quantity
+            }
+            for order_product in order_products
+        ]
 
         orders.append({
             'order_id': order.id,
             'purchase_amount': order.purchase_amount,
-            'type': 'take away' if order.type == b'\x01' else 'dine in',
+            'type': 'take away' if order.order_type else 'dine in',
             'products': products,
             'order_date': order.created_at
         })
 
     return render(request, 'purchase_records.html', {'orders': orders})
+
 
 @login_required
 @admin_required

@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models, transaction, IntegrityError
 from django.db.models import F
 import json
+from django.utils import timezone
 
 class User(AbstractUser):
     email = models.EmailField(unique=True)
@@ -99,6 +100,7 @@ class Order(models.Model):
     products = models.CharField(max_length=255)
     purchase_amount = models.IntegerField()
     order_type = models.BooleanField()
+    created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return str(self.id)
