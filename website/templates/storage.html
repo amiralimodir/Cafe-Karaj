@@ -1,0 +1,41 @@
+<!-- storage.html -->
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Storage</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap">
+    <link rel="stylesheet" href="{% static 'css/storage.css' %}">
+</head>
+<body>
+    <div class="main-container">
+        <div class="navigation">
+            <div class="cafe-karaj">
+                <span class="cafe">Cafe</span><span class="nbsp"> </span><span class="karaj">Karaj</span>
+            </div>
+            <div class="col-md-6">
+                <a href="{% url 'update_storage' %}" class="btn btn-primary">Update Stock</a>
+            </div>
+            <div class="col-md-6">
+                <a href="{% url 'management_dashboard' %}" class="btn btn-primary">Management Dashboard</a>
+            </div>
+        </div>
+        <div class="table">
+            <span class="title">Storage</span>
+            <div class="flex-row">
+                <span class="product">Product</span><span class="amount">Amount</span>
+            </div>
+            <div class="list">
+                {% for item in storage_items %}
+                <div class="row">
+                    <span class="product-name">{{ item.name }}</span><span class="product-amount">{{ item.amount }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -229,3 +229,11 @@ def management_dashboard_view(request):
         'sales_chart_data': sales_chart_data,
     }
     return render(request, 'management_dashboard.html', context)
+
+
+def storage_view(request):
+    storage_items = Storage.objects.all()
+    context = {
+        'storage_items': storage_items
+    }
+    return render(request, 'storage.html', context)
