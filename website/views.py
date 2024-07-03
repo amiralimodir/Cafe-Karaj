@@ -246,7 +246,7 @@ def management_dashboard_view(request):
     start_date = end_date - timedelta(days=int(time_period))
 
     sales_data = (
-        OrderProduct.objects.filter(OrderProduct.created_at in [start_date, end_date])
+        OrderProduct.objects.filter(created_at__range=(start_date, end_date))
         .values('product_id')
         .annotate(sales_count=Count('product_id'))
         .order_by('-sales_count')[:10]
