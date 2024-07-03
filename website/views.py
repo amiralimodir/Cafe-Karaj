@@ -11,12 +11,13 @@ from .forms import CustomUserCreationForm, UserLoginForm, CartForm, OrderForm, P
 from django.db.models import Count,Sum
 from .decorators import admin_required
 import datetime
+from datetime import datetime, timedelta
 
 def register(request):
     if request.method == 'POST':
         user_form = CustomUserCreationForm(request.POST)
         if user_form.is_valid():
-            user = user_form.save()
+            user_form.save()
             return redirect('login')
     else:
         user_form = CustomUserCreationForm()
@@ -124,21 +125,43 @@ def order_success_view(request):
 
 
 def unauthenticated_homepage_view(request):
-    if request.user.is_authenticated:
-        return redirect('authenticated_homepage')
-    return render(request, 'unauthenticated_homepage.html')
+    products = Product.objects.all()
+    
+    most_sold_products = OrderProduct.objects.values('product_id').annotate(total_sales=Sum('quantity')).order_by('-total_sales')
+    product_ids = [item['product_id'] for item in most_sold_products]
+    
+    product_sales_dict = {int(item['product_id']): item['total_sales'] for item in most_sold_products}
 
+    products_with_sales = [{'product': product, 'total_sales': product_sales_dict.get(product.id, 0)} for product in products]
+
+    return render(request, 'unauthenticated_homepage.html', {'products_with_sales': products_with_sales})
+
+@login_required
 def authenticated_homepage_view(request):
     products = Product.objects.all()
     
     most_sold_products = OrderProduct.objects.values('product_id').annotate(total_sales=Sum('quantity')).order_by('-total_sales')
     product_ids = [item['product_id'] for item in most_sold_products]
     
-    # Ensure product_sales_dict keys are integers
     product_sales_dict = {int(item['product_id']): item['total_sales'] for item in most_sold_products}
 
     products_with_sales = [{'product': product, 'total_sales': product_sales_dict.get(product.id, 0)} for product in products]
 
+    cart_form = CartForm()
+
+    if request.method == 'POST':
+        cart_form = CartForm(request.POST)
+        if cart_form.is_valid():
+            cart_item = cart_form.save(commit=False)
+            cart_item.username = request.user.username
+
+            existing_cart_item = Cart.objects.filter(username=cart_item.username, product=cart_item.product).first()
+            if existing_cart_item:
+                existing_cart_item.quantity += cart_item.quantity
+                existing_cart_item.save()
+            else:
+                cart_item.save()
+            
     return render(request, 'authenticated_homepage.html', {'products_with_sales': products_with_sales})
 
 
@@ -216,26 +239,35 @@ def update_storage_view(request):
 @login_required
 @admin_required
 def management_dashboard_view(request):
+    time_period = request.GET.get('time_period', '7')  # Default to last 7 days
+    end_date = datetime.now()
+    start_date = end_date - timedelta(days=int(time_period))
 
     sales_data = (
-        OrderProduct.objects.values('product_id')
+        OrderProduct.objects.filter(OrderProduct.created_at in [start_date, end_date])
+        .values('product_id')
         .annotate(sales_count=Count('product_id'))
         .order_by('-sales_count')[:10]
     )
 
-    products = Product.objects.all()
+    product_ids = [data['product_id'] for data in sales_data]
+    products = Product.objects.filter(id__in=product_ids)
+
     sales_chart_data = {
-        'labels': [data['product_id'] for data in sales_data],
+        'labels': [products.get(id=data['product_id']).name for data in sales_data],
         'data': [data['sales_count'] for data in sales_data],
     }
 
     context = {
         'products': products,
         'sales_chart_data': sales_chart_data,
+        'time_period': time_period,
     }
     return render(request, 'management_dashboard.html', context)
 
 
+@login_required
+@admin_required
 def storage_view(request):
     storage_items = Storage.objects.all()
     context = {

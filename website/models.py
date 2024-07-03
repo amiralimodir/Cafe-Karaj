@@ -192,6 +192,7 @@ class OrderProduct(models.Model):
     order_id = models.CharField(max_length=255)
     product_id = models.CharField(max_length=255)
     quantity = models.PositiveIntegerField()
+    created_at = models.DateTimeField(default=timezone.now)
     
     def __str__(self):
         return f"{self.order.id} - {self.product.name}"
