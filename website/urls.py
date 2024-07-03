@@ -13,6 +13,5 @@ urlpatterns = [
     path('products/', product_list_view, name='product_list'),
     path('purchase_records/', purchase_records_view, name='purchase_records'),
     path('management_dashboard/', management_dashboard_view, name='management_dashboard'),
-    path('management_dashboard/', management_dashboard_view, name='management_dashboard'),
     path('place-order/', place_order, name='place_order'),
 ]

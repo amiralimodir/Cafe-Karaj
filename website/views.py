@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.forms import UserCreationForm
 from django.utils.functional import SimpleLazyObject
-from .models import Product, Order, Storage, OrderProduct,UserOrder, User,Cart
+from .models import Product, Order, Storage, OrderProduct, User,Cart
 from django.http import HttpResponse
 from .forms import CustomUserCreationForm, UserLoginForm, CartForm, OrderForm, ProductFilterForm, AddProductForm, UpdateStorageForm
 from django.db.models import Count
@@ -105,12 +105,13 @@ def cart_view(request):
 
 @login_required
 def place_order(request):
-    cart_items = Cart.objects.filter(username=request.user.username)
+    username=request.user.username
+    cart_items = Cart.objects.filter(username)
     if request.method == 'POST':
         order_type = request.POST.get('order_type') == 'on'
         products = [(item.product.id, item.quantity) for item in cart_items]
         
-        success, message = Order.get_order(request.user, products, order_type)
+        success, message = Order.get_order(username, products, order_type)
         
         if success:
             cart_items.delete()
@@ -151,12 +152,11 @@ def authenticated_homepage_view(request):
 
 @login_required
 def purchase_records_view(request):
-    user_orders = UserOrder.objects.filter(user=request.user)
+    user_orders = Order.objects.filter(username=request.user.username)
     orders = []
 
-    for user_order in user_orders:
-        order = user_order.order
-        order_products = OrderProduct.objects.filter(order=order)
+    for order in user_orders:
+        order_products = OrderProduct.objects.filter(order_id=order.id)
         products = [{'product': order_product.product, 'quantity': 1} for order_product in order_products]
 
         orders.append({
@@ -218,8 +218,8 @@ def update_storage_view(request):
 def management_dashboard_view(request):
 
     sales_data = (
-        OrderProduct.objects.values('product__name')
-        .annotate(sales_count=Count('product'))
+        OrderProduct.objects.values('product_id')
+        .annotate(sales_count=Count('product_id'))
         .order_by('-sales_count')[:10]
     )
 

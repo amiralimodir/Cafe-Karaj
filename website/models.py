@@ -95,7 +95,7 @@ class Product(models.Model):
 
 class Order(models.Model):
     id = models.AutoField(primary_key=True)
-    username = models.ForeignKey(User, on_delete=models.CASCADE)
+    username = models.CharField(max_length=255)
     products = models.CharField(max_length=255)
     purchase_amount = models.IntegerField()
     order_type = models.BooleanField()
@@ -147,9 +147,8 @@ class Order(models.Model):
             order_type=order_type
         )
 
-        UserOrder.objects.create(user=User, order=Order)
         for product_id, quantity in products:
-            OrderProduct.objects.create(order=order, product_id=product_id, quantity=quantity)
+            OrderProduct.objects.create(order_id=order.id, product_id=product_id, quantity=quantity)
         
         return True, 'Order placed successfully.'
 
@@ -179,16 +178,11 @@ class Storage(models.Model):
                 'message': f"Ingredient {ingredient_name} does not exist in storage."
             }
     
-class UserOrder(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
 
-    def __str__(self):
-        return f"{self.user.username} - {self.order.id}"
 
 class OrderProduct(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    order_id = models.CharField(max_length=255)
+    product_id = models.CharField(max_length=255)
 
     def __str__(self):
         return f"{self.order.id} - {self.product.name}"
