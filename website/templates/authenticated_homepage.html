@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/authenticated_homepage.css' %}">
 </head>
 <body>
     <h1>Welcome, {{ request.user.username }}</h1>
@@ -17,7 +17,16 @@
     <h2>Most Sold Products</h2>
     <ul>
         {% for item in products_with_sales %}
-            <li>{{ item.product.name }} - Sales: {{ item.total_sales }}</li>
+            <li><h2>{{ item.product.name }}</h2>
+                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                <p>Price: {{ item.product.price }}</p>
+                <form method="POST" action="{% url 'authenticated_homepage' %}">
+                    {% csrf_token %}
+                    {{ cart_form.as_p }}
+                    <input type="hidden" name="product" value="{{ item.product.id }}">
+                    <button type="submit">Buy</button>
+                </form>
+            </li>
         {% endfor %}
     </ul>
 </body>

@@ -142,7 +142,12 @@ def unauthenticated_homepage_view(request):
 def authenticated_homepage_view(request):
     products = Product.objects.all()
     
-    most_sold_products = OrderProduct.objects.values('product_id').annotate(total_sales=Sum('quantity')).order_by('-total_sales')
+    most_sold_products = (
+    OrderProduct.objects
+    .values('product_id')
+    .annotate(total_sales=Sum('quantity'))
+    .order_by('-total_sales')[:12]
+    )
     product_ids = [item['product_id'] for item in most_sold_products]
     
     product_sales_dict = {int(item['product_id']): item['total_sales'] for item in most_sold_products}
@@ -164,7 +169,7 @@ def authenticated_homepage_view(request):
             else:
                 cart_item.save()
             
-    return render(request, 'authenticated_homepage.html', {'products_with_sales': products_with_sales})
+    return render(request, 'authenticated_homepage.html', {'products_with_sales': products_with_sales, 'cart_form': cart_form})
 
 
 
