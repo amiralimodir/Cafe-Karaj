@@ -114,17 +114,23 @@ class Order(models.Model):
             sugar_needed = product.sugar * quantity
             coffee_needed = product.coffee * quantity
             flour_needed = product.flour * quantity
+            milk_needed = product.milk * quantity
+            egg_needed = product.egg * quantity
             chocolate_needed = product.chocolate * quantity
 
             try:
                 sugar_stock = Storage.objects.get(name='sugar').amount
                 coffee_stock = Storage.objects.get(name='coffee').amount
                 flour_stock = Storage.objects.get(name='flour').amount
+                milk_stock = Storage.objects.get(name='milk').amount
+                egg_stock = Storage.objects.get(name='egg').amount
                 chocolate_stock = Storage.objects.get(name='chocolate').amount
             except Storage.DoesNotExist:
                 return False, 'One or more components are missing from storage.'
 
-            if sugar_needed > sugar_stock or coffee_needed > coffee_stock or flour_needed > flour_stock or chocolate_needed > chocolate_stock:
+            if (sugar_needed > sugar_stock or coffee_needed > coffee_stock or flour_needed > flour_stock or milk_needed > milk_stock or egg_needed > egg_stock or chocolate_needed > chocolate_stock):
+                return False, f'Not enough stock for {product.name}.'
+
                 return False, f'Not enough stock for {product.name}.'
 
             total_price += product.price * quantity
@@ -134,7 +140,7 @@ class Order(models.Model):
             product = Product.objects.get(id=product_id)
             Storage.objects.filter(name='sugar').update(amount=models.F('amount') - product.sugar * quantity)
             Storage.objects.filter(name='coffee').update(amount=models.F('amount') - product.coffee * quantity)
-            Storage.objects.filter(name='floor').update(amount=models.F('amount') - product.flour * quantity)
+            Storage.objects.filter(name='flour').update(amount=models.F('amount') - product.flour * quantity)
             Storage.objects.filter(name='milk').update(amount=models.F('amount') - product.milk * quantity)
             Storage.objects.filter(name='egg').update(amount=models.F('amount') - product.egg * quantity)
             Storage.objects.filter(name='chocolate').update(amount=models.F('amount') - product.chocolate * quantity)
@@ -183,7 +189,8 @@ class Storage(models.Model):
 class OrderProduct(models.Model):
     order_id = models.CharField(max_length=255)
     product_id = models.CharField(max_length=255)
-
+    quantity = models.PositiveIntegerField()
+    
     def __str__(self):
         return f"{self.order.id} - {self.product.name}"
 
@@ -200,7 +207,7 @@ class Cart(models.Model):
 
 sugar, created = Storage.objects.get_or_create(name='sugar', defaults={'amount': 0})
 coffee, created = Storage.objects.get_or_create(name='coffee', defaults={'amount': 0})
-floor, created = Storage.objects.get_or_create(name='floor', defaults={'amount': 0})
+floor, created = Storage.objects.get_or_create(name='flour', defaults={'amount': 0})
 milk, created = Storage.objects.get_or_create(name='milk', defaults={'amount': 0})
 egg, created = Storage.objects.get_or_create(name='egg', defaults={'amount': 0})
 chocolate, created = Storage.objects.get_or_create(name='chocolate', defaults={'amount': 0})
