@@ -23,35 +23,10 @@
                 <span class="enter-your-email">Enter your details to sign up</span>
             </div>
             <div class="input-button">
-                <form method="POST" action="{% url 'register' %}">
+                <form method="post">
                     {% csrf_token %}
-                    <div class="field">
-                        <input class="field-input" type="text" name="username" required>
-                        <span class="label">Username</span>
-                    </div>
-                    <div class="field">
-                        <input class="field-input" type="email" name="email" required>
-                        <span class="label">Email</span>
-                    </div>
-                    <div class="field">
-                        <input class="field-input" type="password" name="password1" required>
-                        <span class="label">Password</span>
-                    </div>
-                    <div class="field">
-                        <input class="field-input" type="password" name="password2" required>
-                        <span class="label">Confirm Password</span>
-                    </div>
-                    <div class="field">
-                        <input class="field-input" type="text" name="full_name" required>
-                        <span class="label">Full Name</span>
-                    </div>
-                    <div class="field">
-                        <input class="field-input" type="text" name="phone_number" required>
-                        <span class="label">Phone Number</span>
-                    </div>
-                    <button class="signup-button" type="submit">
-                        <span class="signup-text">Sign up</span>
-                    </button>
+                    {{ form.as_p }}
+                    <button type="submit">Sign up</button>
                 </form>
             </div>
             <div class="divider">
@@ -95,19 +70,4 @@
                             <div class="icon-17"></div>
                         </div>
                     </div>
-                    <div class="buttons-icon-18">
-                        <div class="icon-19">
-                            <div class="icon-1a"></div>
-                        </div>
-                    </div>
-                    <div class="buttons-icon-1b">
-                        <div class="icon-1c">
-                            <div class="icon-1d"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</body>
-</html>
+                    <div class="buttons

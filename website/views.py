@@ -15,13 +15,15 @@ from datetime import datetime, timedelta
 
 def register(request):
     if request.method == 'POST':
-        user_form = CustomUserCreationForm(request.POST)
-        if user_form.is_valid():
-            user_form.save()
-            return redirect('login')
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            user.backend = 'django.contrib.auth.backends.ModelBackend'
+            login(request, user, backend=user.backend)
+            return redirect('authenticated_homepage')
     else:
-        user_form = CustomUserCreationForm()
-    return render(request, 'register.html', {'user_form': user_form})
+        form = CustomUserCreationForm()
+    return render(request, 'register.html', {'form': form})
 
     
 def login_view(request):
