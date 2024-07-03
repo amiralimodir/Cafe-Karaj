@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Success</title>
+    <link rel="stylesheet" href="{% static 'css/order_success.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="success-message">
+            <h1>Order Successful!</h1>
+            <p>Thank you for your order. Your order has been placed successfully.</p>
+            <p>We will notify you once your order is ready for pickup or delivery.</p>
+        </div>
+
+        <div class="order-details">
+            <h2>Order Details</h2>
+            <ul>
+                <li><strong>Order ID:</strong> {{ order.id }}</li>
+                <li><strong>Order Date:</strong> {{ order.created_at }}</li>
+                <li><strong>Total Amount:</strong> ${{ order.purchase_amount }}</li>
+                <li><strong>Order Type:</strong> {% if order.order_type %}Take Away{% else %}Dine In{% endif %}</li>
+            </ul>
+        </div>
+
+        <a href="{% url 'authenticated_homepage' %}" class="btn">Back to Homepage</a>
+    </div>
+</body>
+</html>

@@ -8,7 +8,7 @@ from django.utils.functional import SimpleLazyObject
 from .models import Product, Order, Storage, OrderProduct, User,Cart
 from django.http import HttpResponse
 from .forms import CustomUserCreationForm, UserLoginForm, CartForm, OrderForm, ProductFilterForm, AddProductForm, UpdateStorageForm
-from django.db.models import Count
+from django.db.models import Count,Sum
 from .decorators import admin_required
 import datetime
 
@@ -105,13 +105,12 @@ def cart_view(request):
 
 @login_required
 def place_order(request):
-    username=request.user.username
-    cart_items = Cart.objects.filter(username)
+    cart_items = Cart.objects.filter(username=request.user.username)
     if request.method == 'POST':
         order_type = request.POST.get('order_type') == 'on'
         products = [(item.product.id, item.quantity) for item in cart_items]
         
-        success, message = Order.get_order(username, products, order_type)
+        success, message = Order.get_order(request.user.username, products, order_type)
         
         if success:
             cart_items.delete()
@@ -121,32 +120,28 @@ def place_order(request):
     
     return redirect('cart')
 
+@login_required
+def order_success_view(request):
+    return render(request, 'order_success.html')
+
 
 def unauthenticated_homepage_view(request):
     if request.user.is_authenticated:
         return redirect('authenticated_homepage')
     return render(request, 'unauthenticated_homepage.html')
 
-@login_required
 def authenticated_homepage_view(request):
-
-
-    most_sold_products = (OrderProduct.objects.values('product_id')
-                          .annotate(total_sales=Count('product_id'))
-                          .order_by('-total_sales')[:12])
-
+    products = Product.objects.all()
+    
+    most_sold_products = OrderProduct.objects.values('product_id').annotate(total_sales=Sum('quantity')).order_by('-total_sales')
     product_ids = [item['product_id'] for item in most_sold_products]
-    products = Product.objects.filter(id__in=product_ids)
+    
+    # Ensure product_sales_dict keys are integers
+    product_sales_dict = {int(item['product_id']): item['total_sales'] for item in most_sold_products}
 
-    product_sales_dict = {item['product_id']: item['total_sales'] for item in most_sold_products}
+    products_with_sales = [{'product': product, 'total_sales': product_sales_dict.get(product.id, 0)} for product in products]
 
-    products_with_sales = [{'product': product, 'total_sales': product_sales_dict[product.id]} for product in products]
-
-    return render(request, 'authenticated_homepage.html', {
-
-        'products_with_sales': products_with_sales
-    })
-
+    return render(request, 'authenticated_homepage.html', {'products_with_sales': products_with_sales})
 
 
 

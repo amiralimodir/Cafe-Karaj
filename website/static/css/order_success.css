@@ -1,0 +1,74 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 800px;
+    margin: 50px auto;
+    background: #fff;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.success-message {
+    text-align: center;
+}
+
+.success-message h1 {
+    color: #4CAF50;
+    margin-bottom: 20px;
+}
+
+.success-message p {
+    color: #555;
+    line-height: 1.6;
+}
+
+.order-details {
+    margin-top: 30px;
+}
+
+.order-details h2 {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.order-details ul {
+    list-style: none;
+    padding: 0;
+}
+
+.order-details li {
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.order-details li:last-child {
+    border-bottom: none;
+}
+
+.order-details strong {
+    color: #333;
+}
+
+.btn {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    color: #fff;
+    background-color: #007BFF;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
