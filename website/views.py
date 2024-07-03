@@ -220,7 +220,7 @@ def management_dashboard_view(request):
 
     products = Product.objects.all()
     sales_chart_data = {
-        'labels': [data['product__name'] for data in sales_data],
+        'labels': [data['product_id'] for data in sales_data],
         'data': [data['sales_count'] for data in sales_data],
     }
 
