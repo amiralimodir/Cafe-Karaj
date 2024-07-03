@@ -1,40 +1,67 @@
+from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models, transaction, IntegrityError
 from django.db.models import F
 import json
 
-class User(models.Model):
-    username = models.CharField(max_length=255, primary_key=True)
+class User(AbstractUser):
+    email = models.EmailField(unique=True)
     full_name = models.CharField(max_length=255)
-    email = models.CharField(max_length=255)
-    password = models.CharField(max_length=255)
-    phone_number = models.IntegerField()
+    phone_number = models.CharField(max_length=15)
 
-    def __str__(self):
-        return self.username
+    groups = models.ManyToManyField(
+        Group,
+        related_name='website_user_set',  # Specify a custom related name
+        blank=True,
+        help_text='The groups this user belongs to.',
+        verbose_name='groups'
+    )
+    user_permissions = models.ManyToManyField(
+        Permission,
+        related_name='website_user_set',  # Specify a custom related name
+        blank=True,
+        help_text='Specific permissions for this user.',
+        verbose_name='user permissions'
+    )
+
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['email', 'full_name', 'phone_number']
 
 class Product(models.Model):
+    VERTICAL_CHOICES = [
+        ('cold_drinks', 'Cold Drinks'),
+        ('hot_drinks', 'Hot Drinks'),
+        ('cake', 'Cake'),
+        ('shake', 'Shake'),
+    ]
+
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
-    sugar = models.IntegerField()
-    coffee = models.IntegerField()
-    flour = models.IntegerField()
+    sugar = models.IntegerField(default=0)
+    coffee = models.IntegerField(default=0)
+    flour = models.IntegerField(default=0)
+    egg = models.IntegerField(default=0)
+    milk = models.IntegerField(default=0)
     chocolate = models.IntegerField()
-    vertical = models.BinaryField()
+    vertical_type = models.CharField(max_length=50, choices=VERTICAL_CHOICES, default='hot_drinks')
     price = models.IntegerField()
+    image = models.ImageField(upload_to='products_images/')
 
     def __str__(self):
         return self.name
     
     @classmethod
-    def add_product(cls, name, sugar, coffee, flour, chocolate, vertical, price):
+    def add_product(cls, name, sugar, coffee, flour, egg, milk, chocolate, vertical_type, price, image):
         product = cls(
             name=name,
             sugar=sugar,
             coffee=coffee,
             flour=flour,
+            egg=egg,
+            milk=milk,
             chocolate=chocolate,
-            vertical=vertical,
-            price=price
+            vertical_type=vertical_type,
+            price=price,
+            image=image
         )
         product.save()
         return product
@@ -52,6 +79,10 @@ class Product(models.Model):
                 possible_counts.append(storage.get('coffee', 0) // product.coffee)
             if product.flour > 0:
                 possible_counts.append(storage.get('flour', 0) // product.flour)
+            if product.milk > 0:
+                possible_counts.append(storage.get('milk', 0) // product.milk)
+            if product.egg > 0:
+                possible_counts.append(storage.get('egg', 0) // product.egg)
             if product.chocolate > 0:
                 possible_counts.append(storage.get('chocolate', 0) // product.chocolate)
             
@@ -64,7 +95,7 @@ class Product(models.Model):
 
 class Order(models.Model):
     id = models.AutoField(primary_key=True)
-    username = models.ForeignKey(User, on_delete=models.CASCADE)
+    username = models.CharField(max_length=255)
     products = models.CharField(max_length=255)
     purchase_amount = models.IntegerField()
     order_type = models.BooleanField()
@@ -103,7 +134,9 @@ class Order(models.Model):
             product = Product.objects.get(id=product_id)
             Storage.objects.filter(name='sugar').update(amount=models.F('amount') - product.sugar * quantity)
             Storage.objects.filter(name='coffee').update(amount=models.F('amount') - product.coffee * quantity)
-            Storage.objects.filter(name='flour').update(amount=models.F('amount') - product.flour * quantity)
+            Storage.objects.filter(name='floor').update(amount=models.F('amount') - product.flour * quantity)
+            Storage.objects.filter(name='milk').update(amount=models.F('amount') - product.milk * quantity)
+            Storage.objects.filter(name='egg').update(amount=models.F('amount') - product.egg * quantity)
             Storage.objects.filter(name='chocolate').update(amount=models.F('amount') - product.chocolate * quantity)
 
 
@@ -114,25 +147,16 @@ class Order(models.Model):
             order_type=order_type
         )
 
-        UserOrder.objects.create(user=User, order=Order)
         for product_id, quantity in products:
-            OrderProduct.objects.create(order=order, product_id=product_id, quantity=quantity)
+            OrderProduct.objects.create(order_id=order.id, product_id=product_id, quantity=quantity)
         
         return True, 'Order placed successfully.'
-
-class Admin(models.Model):
-    username = models.CharField(max_length=255, primary_key=True)
-    email = models.CharField(max_length=255)
-    password = models.CharField(max_length=255)
-
-    def __str__(self):
-        return self.username
 
 class Storage(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     amount = models.IntegerField()
-
+    
     def __str__(self):
         return self.name
     
@@ -154,16 +178,30 @@ class Storage(models.Model):
                 'message': f"Ingredient {ingredient_name} does not exist in storage."
             }
     
-class UserOrder(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
 
-    def __str__(self):
-        return f"{self.user.username} - {self.order.id}"
 
 class OrderProduct(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    order_id = models.CharField(max_length=255)
+    product_id = models.CharField(max_length=255)
 
     def __str__(self):
         return f"{self.order.id} - {self.product.name}"
+
+
+class Cart(models.Model):
+    username = models.CharField(max_length=255)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+
+    def __str__(self):
+        return f'{self.product.name} (x{self.quantity})'
+    
+
+
+sugar, created = Storage.objects.get_or_create(name='sugar', defaults={'amount': 0})
+coffee, created = Storage.objects.get_or_create(name='coffee', defaults={'amount': 0})
+floor, created = Storage.objects.get_or_create(name='floor', defaults={'amount': 0})
+milk, created = Storage.objects.get_or_create(name='milk', defaults={'amount': 0})
+egg, created = Storage.objects.get_or_create(name='egg', defaults={'amount': 0})
+chocolate, created = Storage.objects.get_or_create(name='chocolate', defaults={'amount': 0})
+    

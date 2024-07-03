@@ -1,23 +1,32 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from .models import Product, Order, User
+from .models import Product, Order, User, Cart
+from django.contrib.auth import get_user_model
 
-class UserRegistrationForm(UserCreationForm):
+User = get_user_model()
+
+class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True)
-    full_name = forms.CharField(max_length=255)
-    phone_number = forms.IntegerField()
+    full_name = forms.CharField(max_length=255, required=True)
+    phone_number = forms.CharField(max_length=15, required=True)
 
-    class Meta:
+    class Meta(UserCreationForm.Meta):
         model = User
-        fields = ['username', 'full_name', 'email', 'phone_number', 'password']
+        fields = ('username', 'email', 'full_name', 'phone_number', 'password1', 'password2')
 
-class UserLoginForm(AuthenticationForm):
-    username = forms.CharField(max_length=255)
+
+class UserLoginForm(forms.Form):
+    username_or_email = forms.CharField(label='Username or Email')
     password = forms.CharField(widget=forms.PasswordInput)
 
-class CartForm(forms.Form):
-    product = forms.ModelChoiceField(queryset=Product.objects.all(), label='Product')
-    quantity = forms.IntegerField(min_value=1, required=True, label='Quantity')
+
+class CartForm(forms.ModelForm):
+    class Meta:
+        model = Cart
+        fields = ['product', 'quantity']
+        widgets = {
+            'product': forms.HiddenInput()
+        }
 
 class OrderForm(forms.ModelForm):
     class Meta:
@@ -28,24 +37,19 @@ class OrderForm(forms.ModelForm):
         }
 
 
-class AddProductForm(forms.Form):
-    name = forms.CharField(max_length=255)
-    sugar = forms.IntegerField()
-    coffee = forms.IntegerField()
-    flour = forms.IntegerField()
-    chocolate = forms.IntegerField()
-    vertical = forms.BooleanField()
-    price = forms.IntegerField()
+class AddProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ['name', 'sugar', 'coffee', 'flour', 'egg', 'milk', 'chocolate', 'vertical_type', 'price', 'image']
+
 
 class UpdateStorageForm(forms.Form):
     ingredient_name = forms.CharField(max_length=255)
     quantity = forms.IntegerField()
 
 class ProductFilterForm(forms.Form):
-    CATEGORY_CHOICES = [
-        ('cold_drink', 'Cold Drink'),
-        ('hot_drink', 'Hot Drink'),
-        ('cake', 'Cake'),
-        ('shake', 'Shake'),
-    ]
-    category = forms.ChoiceField(choices=CATEGORY_CHOICES, required=False, label='Category')
+    verticals = forms.MultipleChoiceField(
+        choices=Product.VERTICAL_CHOICES,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )

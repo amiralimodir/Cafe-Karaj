@@ -1,0 +1,113 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Cafe Karaj</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="{% static 'css/register.css' %}">
+</head>
+<body>
+    <div class="main-container">
+        <div class="navigation">
+            <div class="cafe-karaj">
+                <a href="{% url 'unauthenticated_homepage' %}">
+                    <span class="cafe">cafe</span><span class="nbsp"> </span><span class="karaj">Karaj</span>
+                </a>
+            </div>
+        </div>
+        <div class="signup-form">
+            <div class="copy">
+                <span class="create-an-account">Create an account</span>
+                <span class="enter-your-email">Enter your details to sign up</span>
+            </div>
+            <div class="input-button">
+                <form method="POST" action="{% url 'register' %}">
+                    {% csrf_token %}
+                    <div class="field">
+                        <input class="field-input" type="text" name="username" required>
+                        <span class="label">Username</span>
+                    </div>
+                    <div class="field">
+                        <input class="field-input" type="email" name="email" required>
+                        <span class="label">Email</span>
+                    </div>
+                    <div class="field">
+                        <input class="field-input" type="password" name="password1" required>
+                        <span class="label">Password</span>
+                    </div>
+                    <div class="field">
+                        <input class="field-input" type="password" name="password2" required>
+                        <span class="label">Confirm Password</span>
+                    </div>
+                    <div class="field">
+                        <input class="field-input" type="text" name="full_name" required>
+                        <span class="label">Full Name</span>
+                    </div>
+                    <div class="field">
+                        <input class="field-input" type="text" name="phone_number" required>
+                        <span class="label">Phone Number</span>
+                    </div>
+                    <button class="signup-button" type="submit">
+                        <span class="signup-text">Sign up</span>
+                    </button>
+                </form>
+            </div>
+            <div class="divider">
+                <div class="rectangle"></div>
+                <span class="continue-with-text">or continue with</span>
+                <div class="rectangle-3"></div>
+            </div>
+            <a href="{% url 'login' %}" class="login-button">
+                <span class="login-text">Log in</span>
+            </a>
+            <div class="terms-service-privacy">
+                <span class="click-agree-continue">By clicking continue, you agree to our </span>
+                <span class="terms-service">Terms of Service</span>
+                <span class="click-agree-continue-4"> and </span>
+                <span class="terms-service-5">Privacy Policy</span>
+            </div>
+        </div>
+        <div class="navigation-footer">
+            <div class="divider-6"></div>
+            <div class="flex-row-f">
+                <div class="regroup">
+                    <div class="items">
+                        <span class="topic">Topic</span><span class="page">Page</span><span class="page-7">Page</span><span class="page-8">Page</span>
+                    </div>
+                    <div class="items-9">
+                        <span class="topic-a">Topic</span><span class="page-b">Page</span><span class="page-c">Page</span><span class="page-d">Page</span>
+                    </div>
+                    <div class="items-e">
+                        <span class="topic-f">Topic</span><span class="page-10">Page</span><span class="page-11">Page</span><span class="page-12">Page</span>
+                    </div>
+                </div>
+                <span class="cafe-karaj-13">Cafe Karaj</span>
+                <div class="social-icons">
+                    <div class="buttons-icon">
+                        <div class="icon">
+                            <div class="icon-14"></div>
+                        </div>
+                    </div>
+                    <div class="buttons-icon-15">
+                        <div class="icon-16">
+                            <div class="icon-17"></div>
+                        </div>
+                    </div>
+                    <div class="buttons-icon-18">
+                        <div class="icon-19">
+                            <div class="icon-1a"></div>
+                        </div>
+                    </div>
+                    <div class="buttons-icon-1b">
+                        <div class="icon-1c">
+                            <div class="icon-1d"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
