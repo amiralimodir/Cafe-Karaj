@@ -1,10 +1,11 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate, logout
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import login, authenticate, logout, get_user_model
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.forms import UserCreationForm
-from .models import Product, Order, Storage, OrderProduct,UserOrder, User
+from django.utils.functional import SimpleLazyObject
+from .models import Product, Order, Storage, OrderProduct,UserOrder, User,Cart
 from django.http import HttpResponse
 from .forms import CustomUserCreationForm, UserLoginForm, CartForm, OrderForm, ProductFilterForm, AddProductForm, UpdateStorageForm
 from django.db.models import Count
@@ -46,58 +47,79 @@ def logout_view(request):
     logout(request)
     return redirect('unauthenticated_homepage')
 
-@login_required
-def cart_view(request):
-    cart_form = CartForm()
-    order_form = OrderForm()
-
-    if request.method == 'POST':
-        cart_form = CartForm(request.POST)
-        order_form = OrderForm(request.POST)
-
-        if cart_form.is_valid() and order_form.is_valid():
-            product = cart_form.cleaned_data['product']
-            quantity = cart_form.cleaned_data['quantity']
-            order_type = order_form.cleaned_data['order_type']
-
-            order_valid, message = Order.get_order(
-                user=request.user,
-                products=[(product.id, quantity)],
-                order_type=order_type
-            )
-
-            if not order_valid:
-                return render(request, 'cart.html', {
-                    'cart_form': cart_form,
-                    'order_form': order_form,
-                    'error': message
-                })
-
-            return render(request, 'order_success.html', {'message': message})
-
-    return render(request, 'cart.html', {
-        'cart_form': cart_form,
-        'order_form': order_form
-    })
+User = get_user_model()
 
 @login_required
 def product_list_view(request):
-    form = ProductFilterForm(request.GET or None)
     products = Product.objects.all()
+    filter_form = ProductFilterForm(request.GET)
+    cart_form = CartForm()
 
-    if form.is_valid():
-        category = form.cleaned_data.get('category')
-        if category:
-            if category == 'cold_drink':
-                products = products.filter(vertical=True)
-            elif category == 'hot_drink':
-                products = products.filter(vertical=False)
-            elif category == 'cake':
-                products = products.filter(name__icontains='cake')
-            elif category == 'shake':
-                products = products.filter(name__icontains='shake')
+    if filter_form.is_valid():
+        vertical_type = filter_form.cleaned_data.get('vertical_type')
+        if vertical_type:
+            products = products.filter(vertical_type__in=vertical_type)
 
-    return render(request, 'product_list.html', {'form': form, 'products': products})
+    if request.method == 'POST':
+        cart_form = CartForm(request.POST)
+        if cart_form.is_valid():
+            cart_item = cart_form.save(commit=False)
+
+            username = request.user.username
+            cart_item.username = username
+
+            existing_cart_item = Cart.objects.filter(username=username, product=cart_item.product).first()
+            if existing_cart_item:
+                existing_cart_item.quantity += cart_item.quantity
+                existing_cart_item.save()
+            else:
+                cart_item.save()
+
+            return redirect('product_list')
+
+    context = {
+        'products': products,
+        'filter_form': filter_form,
+        'cart_form': cart_form
+    }
+    return render(request, 'product_list.html', context)
+
+@login_required
+def cart_view(request):
+    cart_items = Cart.objects.filter(username=request.user.username)
+    total_price = sum(item.product.price * item.quantity for item in cart_items)
+    
+    if request.method == 'POST':
+        cart_id = request.POST.get('cart_id')
+        quantity = request.POST.get('quantity')
+        cart_item = get_object_or_404(Cart, id=cart_id)
+        cart_item.quantity = int(quantity)
+        cart_item.save()
+        return redirect('cart')
+
+    context = {
+        'cart_items': cart_items,
+        'total_price': total_price,
+    }
+    return render(request, 'cart.html', context)
+
+@login_required
+def place_order(request):
+    cart_items = Cart.objects.filter(username=request.user.username)
+    if request.method == 'POST':
+        order_type = request.POST.get('order_type') == 'on'
+        products = [(item.product.id, item.quantity) for item in cart_items]
+        
+        success, message = Order.get_order(request.user, products, order_type)
+        
+        if success:
+            cart_items.delete()
+            return redirect('order_success')
+        else:
+            return render(request, 'cart.html', {'error': message, 'cart_items': cart_items})
+    
+    return redirect('cart')
+
 
 def unauthenticated_homepage_view(request):
     if request.user.is_authenticated:
@@ -153,7 +175,19 @@ def add_product_view(request):
     if request.method == 'POST':
         form = AddProductForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            data = form.cleaned_data
+            Product.add_product(
+                name=data['name'],
+                sugar=data['sugar'],
+                coffee=data['coffee'],
+                flour=data['flour'],
+                egg=data['egg'],
+                milk=data['milk'],
+                chocolate=data['chocolate'],
+                vertical_type=data['vertical_type'],
+                price=data['price'],
+                image=data['image']
+            )
             return redirect('product_list')
     else:
         form = AddProductForm()
@@ -170,7 +204,7 @@ def update_storage_view(request):
             quantity = form.cleaned_data['quantity']
             result = Storage.update_storage(ingredient_name, quantity)
             if result['status'] == 'success':
-                return redirect('storage_list')
+                return redirect('management_dashboard')
             else:
                 form.add_error(None, result['message'])
     else:
