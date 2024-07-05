@@ -1,41 +1,64 @@
-<!-- storage.html -->
 
-{% load static %}
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="rtl">
 <head>
+        {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Storage</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap">
-    <link rel="stylesheet" href="{% static 'css/storage.css' %}">
+    <title>Coffee Shop</title>
+    <link rel="stylesheet" href="{% static 'css/mohsen/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/mohsen/src/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <div class="main-container">
-        <div class="navigation">
-            <div class="cafe-karaj">
-                <span class="cafe">Cafe</span><span class="nbsp"> </span><span class="karaj">Karaj</span>
-            </div>
-            <div class="col-md-6">
-                <a href="{% url 'update_storage' %}" class="btn btn-primary">Update Stock</a>
-            </div>
-            <div class="col-md-6">
-                <a href="{% url 'management_dashboard' %}" class="btn btn-primary">Management Dashboard</a>
-            </div>
+  <nav class="nav">
+    <ul>
+       <li>    <a href="">خوش آمدید, {{ request.user.username }}</a></li>        <li>    <a href="{% url 'product_list' %}">لیست محصولات</a></li>        <li>    <a href="{% url 'purchase_records' %}">سوابق خرید</a></li>        <li> <a href="{% url 'cart' %}">سبد خرید</a></li><li> <a href="{% url 'logout' %}">حروج از اکانت</a></li>
+      <li class="dropdown">
+        <a href="#" class="dropbtn"><i class="fas fa-bars"></i> منوی محصولات</a>
+        <div class="dropdown-content">
+            <a href="http://127.0.0.1:8000/products/?verticals=hot_drinks">نوشیدنی گرم</a>
+            <a href="http://127.0.0.1:8000/products/?verticals=cold_drinks">نوشیدنی سرد</a>
+            <a href="http://127.0.0.1:8000/products/?verticals=shake">شیک</a>
+            <a href="http://127.0.0.1:8000/products/?verticals=cake">کیک</a>
         </div>
-        <div class="table">
-            <span class="title">Storage</span>
+      </li>
+    </ul>
+  </nav>
+
+<div class="main-container">
+    <aside class="sidebar">
+        <a href="{% url 'storage' %}">مدیریت انبار</a>
+        <a href="{% url 'add_product' %}">اضافه کردن محصول</a>
+    </aside>
+    <main class="content">
+        <div class="chart-container">
+            <h2 class="chart-title">Storage</h2>
             <div class="flex-row">
                 <span class="product">Product</span><span class="amount">Amount</span>
             </div>
-            <div class="list">
+             <div class="card p-4">
+            <table class="table">
+            <thead>
+                    <tr>
+                        <th>محصول</th>
+                        <th>تعداد</th>
+                    </tr>
+                </thead>
+                <tbody>
                 {% for item in storage_items %}
-                <div class="row">
-                    <span class="product-name">{{ item.name }}</span><span class="product-amount">{{ item.amount }}</span>
-                </div>
+                    <tr>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.amount }}</td>
+                    </tr>
                 {% endfor %}
+                  </tbody>
+            </table>
             </div>
         </div>
-    </div>
+   </div>
+  <script src="{% static 'css/mohsen/src/bootstrap.bundle.min.js' %}"></script>
 </body>
 </html>
+

@@ -1,33 +1,87 @@
+
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="rtl">
 <head>
-    {% load static %}
+        {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-    <link rel="stylesheet" href="{% static 'css/authenticated_homepage.css' %}">
+    <title>Coffee Shop</title>
+    <link rel="stylesheet" href="{% static 'css/mohsen/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/mohsen/src/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <h1>Welcome, {{ request.user.username }}</h1>
-    <a href="{% url 'product_list' %}">Product List</a>
-    <a href="{% url 'purchase_records' %}">Purchase Records</a>
-    <a href="{% url 'cart' %}">Cart</a>
-    <a href="{% url 'logout' %}">Logout</a>
 
-    <h2>Most Sold Products</h2>
+  <nav class="nav">
     <ul>
-        {% for item in products_with_sales %}
-            <li><h2>{{ item.product.name }}</h2>
-                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
-                <p>Price: {{ item.product.price }}</p>
-                <form method="POST" action="{% url 'authenticated_homepage' %}">
-                    {% csrf_token %}
-                    {{ cart_form.as_p }}
-                    <input type="hidden" name="product" value="{{ item.product.id }}">
-                    <button type="submit">Buy</button>
-                </form>
-            </li>
-        {% endfor %}
+       <li>    <a href="">خوش آمدید, {{ request.user.username }}</a></li>        <li>    <a href="{% url 'product_list' %}">لیست محصولات</a></li>        <li>    <a href="{% url 'purchase_records' %}">سوابق خرید</a></li>        <li> <a href="{% url 'cart' %}">سبد خرید</a></li><li> <a href="{% url 'logout' %}">حروج از اکانت</a></li>
+      <li class="dropdown">
+        <a href="#" class="dropbtn"><i class="fas fa-bars"></i> منوی محصولات</a>
+        <div class="dropdown-content">
+            <a href="http://127.0.0.1:8000/products/?verticals=hot_drinks">نوشیدنی گرم</a>
+            <a href="http://127.0.0.1:8000/products/?verticals=cold_drinks">نوشیدنی سرد</a>
+            <a href="http://127.0.0.1:8000/products/?verticals=shake">شیک</a>
+            <a href="http://127.0.0.1:8000/products/?verticals=cake">کیک</a>
+        </div>
+      </li>
     </ul>
+  </nav>
+
+  <!--------------------------------- slider------------------------------- -->
+
+  <div id="carouselExampleRide" class="carousel slide slide-margin" data-bs-ride="true">
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <img src="https://dkstatics-public.digikala.com/digikala-adservice-banners/f9484e742e35589e22abd45bd6e062f49940565a_1719725299.jpg?x-oss-process=image/quality,q_95/format,webp" class="d-block w-100" alt="...">
+      </div>
+      <div class="carousel-item">
+        <img src="https://dkstatics-public.digikala.com/digikala-adservice-banners/5bc0f2b357a3ccf26164efeec0d86f02e07b6f17_1719914905.gif?x-oss-process=image?x-oss-process=image/format,webp" class="d-block w-100" alt="...">
+      </div>
+
+      <div class="carousel-item">
+        <img src="https://dkstatics-public.digikala.com/digikala-adservice-banners/f9484e742e35589e22abd45bd6e062f49940565a_1719725299.jpg?x-oss-process=image/quality,q_95/format,webp" class="d-block w-100" alt="...">
+      </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleRide" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleRide" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+  </div>
+
+  <div class="main">
+    <div class="container ">
+      <h2 class="section-title">۱۲ محصول پر فروش</h2>
+      <div class="row row-cols-1 row-cols-md-3 g-4">
+          {% for item in products_with_sales %}
+        <div class="col">
+          <div class="card h-100">
+            <img src="{{ item.product.image.url }}" width="414" height="414" class="card-img-top" alt="{{ item.product.name }}">
+            <div class="card-body">
+              <h5 class="card-title">{{ item.product.name }}</h5>
+              <p class="card-text">قیمت : {{ item.product.price }}</p>
+                <form method="POST" action="{% url 'authenticated_homepage' %}">
+                <div class="mb-1">
+
+                    {% csrf_token %}
+                                    <label for="password" class="form-label">{{ cart_form.as_p }}</label>
+                    <input type="hidden" class="form-control"  name="product" value="{{ item.product.id }}">
+                </div>
+
+                    <button type="submit" class=" btn-coffee">خرید</button>
+                </form>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <script src="{% static 'css/mohsen/src/bootstrap.bundle.min.js' %}"></script>
 </body>
 </html>

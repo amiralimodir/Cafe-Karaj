@@ -3,111 +3,78 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Shopping Cart</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" />
-    <link rel="stylesheet" href="{% static 'css/cart.css' %}" />
+        {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coffee Shop</title>
+    <link rel="stylesheet" href="{% static 'css/mohsen/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/mohsen/src/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <div class="main-container">
-        <div class="navigation">
-            <div class="cafe-karaj">
-                <span class="cafe">cafe</span><span class="nbsp"> </span><span class="karaj">Karaj</span>
-            </div>
-            <a href="{% url 'cart' %}" class="button">
-                <div class="icons-cart"></div>
-                <span class="cart-1">Cart</span>
-            </a>
-            <div class="items">
-                <a href="{% url 'product_list' %}"><span class="hot-drinks">HOT Drinks</span></a>
-                <a href="{% url 'product_list' %}"><span class="cold-drinks">COLD Drinks</span></a>
-                <a href="{% url 'product_list' %}"><span class="cake">Cake</span></a>
-                <a href="{% url 'product_list' %}"><span class="shake">Shake</span></a>
-            </div>
+  <nav class="nav">
+    <ul>
+       <li>    <a href="">خوش آمدید, {{ request.user.username }}</a></li>        <li>    <a href="{% url 'product_list' %}">لیست محصولات</a></li>        <li>    <a href="{% url 'purchase_records' %}">سوابق خرید</a></li>        <li> <a href="{% url 'cart' %}">سبد خرید</a></li><li> <a href="{% url 'logout' %}">حروج از اکانت</a></li>
+      <li class="dropdown">
+        <a href="#" class="dropbtn"><i class="fas fa-bars"></i> منوی محصولات</a>
+        <div class="dropdown-content">
+            <a href="http://127.0.0.1:8000/products/?verticals=hot_drinks">نوشیدنی گرم</a>
+            <a href="http://127.0.0.1:8000/products/?verticals=cold_drinks">نوشیدنی سرد</a>
+            <a href="http://127.0.0.1:8000/products/?verticals=shake">شیک</a>
+            <a href="http://127.0.0.1:8000/products/?verticals=cake">کیک</a>
         </div>
-        <div class="table">
-            <span class="title">Cart</span>
-            <div class="flex-row-e">
-                <span class="products">Products</span>
-                <span class="qty">Qty</span>
-                <span class="rate">Rate</span>
-                <span class="amount">Amount</span>
-            </div>
-            <div class="list">
+      </li>
+    </ul>
+  </nav>
+   <div class="main">
+    <div class="container mt-5">
+        <h2 class="section-title">سبد خرید</h2>
+        <div class="card p-4">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>نام محصول</th>
+                        <th>تعداد</th>
+                        <th>قیمت</th>
+                        <th>مجموع</th>
+                    </tr>
+                </thead>
+                <tbody>
                 {% for item in cart_items %}
-                <div class="frame">
-                    <span class="row-1">{{ item.product.name }}</span>
-                    <form method="POST" action="{% url 'cart' %}">
+                    <tr>
+                        <td>{{ item.product.name }}</td>
+                        <td>
+                                  <form method="POST" action="{% url 'cart' %}">
                         {% csrf_token %}
                         <input type="hidden" name="cart_id" value="{{ item.id }}">
-                        <input type="number" name="quantity" value="{{ item.quantity }}" min="1">
-                        <button type="submit">Update</button>
+                        <input type="number" value="{{ item.quantity }}" min="1" name="quantity" class="form-control mb-2">
+                        <button class=" btn-coffee" type="submit">بروز رسانی</button>
                     </form>
-                    <span class="rate">{{ item.product.price }}</span>
-                    <span class="amount">{{ item.product.price|multiply:item.quantity }}</span>
-                </div>
+
+                        </td>
+                        <td>{{ item.product.price }}</td>
+                        <td>{{ item.product.price|multiply:item.quantity }}</td>
+                    </tr>
                 {% endfor %}
-                <div class="wrapper-6">
-                    <span class="text-26">SUM</span>
-                    <span class="span">{{ total_price }}</span>
-                </div>
+                </tbody>
+            </table>
+            <div class="text-end">
+                <p>{{ total_price }}  </p><p> تومان</p>
+
             </div>
-            <form method="POST" action="{% url 'place_order' %}">
+            <div class="text-end">
+                            <form method="POST" action="{% url 'place_order' %}">
                 {% csrf_token %}
                 <label for="order_type">Delivery</label>
                 <input type="checkbox" name="order_type" id="order_type">
-                <button class="button-9"><span class="span-a">Payment</span></button>
+                <button class=" btn-coffee"><span class="span-a">پرداخت</span></button>
             </form>
-        </div>
-    </div>
-    <div class="div">
-        <div class="div-b"></div>
-        <div class="div-c">
-            <div class="div-d">
-                <div class="div-e">
-                    <span class="span-f">Topic</span>
-                    <span class="span-10">Page</span>
-                    <span class="span-11">Page</span>
-                    <span class="span-12">Page</span>
-                </div>
-                <div class="div-13">
-                    <span class="span-14">Topic</span>
-                    <span class="span-15">Page</span>
-                    <span class="span-16">Page</span>
-                    <span class="span-17">Page</span>
-                </div>
-                <div class="div-18">
-                    <span class="topic">Topic</span>
-                    <span class="page">Page</span>
-                    <span class="page-19">Page</span>
-                    <span class="page-1a">Page</span>
-                </div>
-            </div>
-            <span class="cafe-karaj-1b">Cafe Karaj</span>
-            <div class="social-icons">
-                <div class="buttons-icon">
-                    <div class="icon">
-                        <div class="icon-1c"></div>
-                    </div>
-                </div>
-                <div class="buttons-icon-1d">
-                    <div class="icon-1e">
-                        <div class="icon-1f"></div>
-                    </div>
-                </div>
-                <div class="buttons-icon-20">
-                    <div class="icon-21">
-                        <div class="icon-22"></div>
-                    </div>
-                </div>
-                <div class="buttons-icon-23">
-                    <div class="icon-24">
-                        <div class="icon-25"></div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
+</div>
+
+  <script src="{% static 'css/mohsen/src/bootstrap.bundle.min.js' %}"></script>
 </body>
 </html>
+

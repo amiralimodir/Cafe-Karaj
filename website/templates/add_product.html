@@ -1,74 +1,62 @@
-{% load static %}
+
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="rtl">
 <head>
+        {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Product - Cafe Karaj</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
-    <link rel="stylesheet" href="{% static 'css/add_product.css' %}">
+    <title>Coffee Shop</title>
+    <link rel="stylesheet" href="{% static 'css/mohsen/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/mohsen/src/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <div class="main-container">
-        <div class="navigation">
-            <div class="cafe-karaj">
-                <a href="{% url 'unauthenticated_homepage' %}">
-                    <span class="cafe">cafe</span><span class="nbsp"> </span><span class="karaj">Karaj</span>
-                </a>
-            </div>
+
+  <nav class="nav">
+    <ul>
+       <li>    <a href="">خوش آمدید, {{ request.user.username }}</a></li>        <li>    <a href="{% url 'product_list' %}">لیست محصولات</a></li>        <li>    <a href="{% url 'purchase_records' %}">سوابق خرید</a></li>        <li> <a href="{% url 'cart' %}">سبد خرید</a></li><li> <a href="{% url 'logout' %}">حروج از اکانت</a></li>
+      <li class="dropdown">
+        <a href="#" class="dropbtn"><i class="fas fa-bars"></i> منوی محصولات</a>
+        <div class="dropdown-content">
+            <a href="http://127.0.0.1:8000/products/?verticals=hot_drinks">نوشیدنی گرم</a>
+            <a href="http://127.0.0.1:8000/products/?verticals=cold_drinks">نوشیدنی سرد</a>
+            <a href="http://127.0.0.1:8000/products/?verticals=shake">شیک</a>
+            <a href="http://127.0.0.1:8000/products/?verticals=cake">کیک</a>
         </div>
-        <div class="add-product-form">
-            <div class="copy">
-                <span class="add-product-title">Add New Product</span>
-                <span class="enter-product-details">Enter the details of the product you want to add</span>
-            </div>
-            <div class="input-button">
+      </li>
+    </ul>
+  </nav>
+
+<div class="main-container">
+    <aside class="sidebar">
+        <a href="{% url 'storage' %}">مدیریت انبار</a>
+        <a href="{% url 'add_product' %}">اضافه کردن محصول</a>
+    </aside>
+
+    <main class="content">
+        <div class="chart-container">
+            <h2 class="chart-title">اضافه کردن محصول جدید</h2>
+                    <div class="input-button">
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     {{ form.as_p }}
-                    <button type="submit">Add Product</button>
+                    <button type="submit" class="btn-coffee">Add Product</button>
                 </form>
             </div>
-            <div class="navigation-footer">
-                <div class="divider"></div>
-                <div class="flex-row">
-                    <div class="regroup">
-                        <div class="items">
-                            <span class="topic">Topic</span><span class="page">Page</span><span class="page-7">Page</span><span class="page-8">Page</span>
-                        </div>
-                        <div class="items-9">
-                            <span class="topic-a">Topic</span><span class="page-b">Page</span><span class="page-c">Page</span><span class="page-d">Page</span>
-                        </div>
-                        <div class="items-e">
-                            <span class="topic-f">Topic</span><span class="page-10">Page</span><span class="page-11">Page</span><span class="page-12">Page</span>
-                        </div>
-                    </div>
-                    <span class="cafe-karaj-13">Cafe Karaj</span>
-                    <div class="social-icons">
-                        <div class="buttons-icon">
-                            <div class="icon">
-                                <div class="icon-14"></div>
-                            </div>
-                        </div>
-                        <div class="buttons-icon-15">
-                            <div class="icon-16">
-                                <div class="icon-17"></div>
-                            </div>
-                        </div>
-                        <div class="buttons-icon-18">
-                            <div class="icon-19">
-                                <div class="icon-1a"></div>
-                            </div>
-                        </div>
-                        <div class="buttons-icon-1b">
-                            <div class="icon-1c">
-                                <div class="icon-1d"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        </div>
+
+    </main>
+</div>
+
+        <div class="add-product-form">
+            <div class="copy">
+                <span class="add-product-title">اضافه کردن محصول جدید</span>
             </div>
+
+
         </div>
     </div>
+  <script src="{% static 'css/mohsen/src/bootstrap.bundle.min.js' %}"></script>
 </body>
 </html>

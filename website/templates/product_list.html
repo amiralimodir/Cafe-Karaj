@@ -1,34 +1,65 @@
-{% load static %}
+
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="rtl">
 <head>
+        {% load static %}
     <meta charset="UTF-8">
-    <title>Product List</title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coffee Shop</title>
+    <link rel="stylesheet" href="{% static 'css/mohsen/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/mohsen/src/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <div class="navigation">
-        <a href="{% url 'unauthenticated_homepage' %}">Home</a>
-        <a href="{% url 'cart' %}">Go to Cart</a>  <!-- New "Go to Cart" button -->
-    </div>
-    <div class="product-list">
-        <form method="GET">
+
+  <nav class="nav">
+    <ul>
+       <li>    <a href="">خوش آمدید, {{ request.user.username }}</a></li>        <li>    <a href="{% url 'product_list' %}">لیست محصولات</a></li>        <li>    <a href="{% url 'purchase_records' %}">سوابق خرید</a></li>        <li> <a href="{% url 'cart' %}">سبد خرید</a></li><li> <a href="{% url 'logout' %}">حروج از اکانت</a></li>
+      <li class="dropdown">
+        <a href="#" class="dropbtn"><i class="fas fa-bars"></i> منوی محصولات</a>
+        <div class="dropdown-content">
+            <a href="http://127.0.0.1:8000/products/?verticals=hot_drinks">نوشیدنی گرم</a>
+            <a href="http://127.0.0.1:8000/products/?verticals=cold_drinks">نوشیدنی سرد</a>
+            <a href="http://127.0.0.1:8000/products/?verticals=shake">شیک</a>
+            <a href="http://127.0.0.1:8000/products/?verticals=cake">کیک</a>
+        </div>
+      </li>
+    </ul>
+  </nav>
+  <div class="main">
+    <div class="container ">
+      <h2 class="section-title"> محصولات  </h2>
+         <form method="GET">
             {{ filter_form.as_p }}
-            <button type="submit">Filter</button>
+            <button type="submit" class=" btn-coffee">Filter</button>
         </form>
+      <div class="row row-cols-1 row-cols-md-3 g-4">
+
         {% for product in products %}
-            <div class="product-item">
-                <h2>{{ product.name }}</h2>
-                <img src="{{ product.image.url }}" alt="{{ product.name }}">
-                <p>Price: {{ product.price }}</p>
+      <div class="col">
+          <div class="card h-100">
+            <img src="{{ product.image.url }}" width="414" height="414" class="card-img-top" alt="{{ item.product.name }}">
+            <div class="card-body">
+              <h5 class="card-title">{{ product.name }}</h5>
+              <p class="card-text">قیمت : {{ product.price }}</p>
                 <form method="POST" action="{% url 'product_list' %}">
+                <div class="mb-1">
+
                     {% csrf_token %}
-                    {{ cart_form.as_p }}
-                    <input type="hidden" name="product" value="{{ product.id }}">
-                    <button type="submit">Buy</button>
+                                    <label for="password" class="form-label">{{ cart_form.as_p }}</label>
+                    <input type="hidden" class="form-control"  name="product" value="{{ product.id }}">
+                </div>
+
+                    <button type="submit" class=" btn-coffee">خرید</button>
                 </form>
             </div>
+          </div>
+        </div>
         {% endfor %}
     </div>
+    </div>
+
+  <script src="{% static 'css/mohsen/src/bootstrap.bundle.min.js' %}"></script>
 </body>
 </html>

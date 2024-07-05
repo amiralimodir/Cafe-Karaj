@@ -246,7 +246,7 @@ def update_storage_view(request):
 @login_required
 @admin_required
 def management_dashboard_view(request):
-    time_period = request.GET.get('time_period', '7')  # Default to last 7 days
+    time_period = request.GET.get('time_period', '7')
     end_date = datetime.now()
     start_date = end_date - timedelta(days=int(time_period))
 

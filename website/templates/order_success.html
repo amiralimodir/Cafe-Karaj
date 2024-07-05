@@ -1,31 +1,49 @@
-{% load static %}
+
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="rtl">
 <head>
+        {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Success</title>
-    <link rel="stylesheet" href="{% static 'css/order_success.css' %}">
+    <title>Coffee Shop</title>
+    <link rel="stylesheet" href="{% static 'css/mohsen/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/mohsen/src/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <div class="container">
-        <div class="success-message">
-            <h1>Order Successful!</h1>
-            <p>Thank you for your order. Your order has been placed successfully.</p>
-            <p>We will notify you once your order is ready for pickup or delivery.</p>
+
+  <nav class="nav">
+    <ul>
+       <li>    <a href="">خوش آمدید, {{ request.user.username }}</a></li>        <li>    <a href="{% url 'product_list' %}">لیست محصولات</a></li>        <li>    <a href="{% url 'purchase_records' %}">سوابق خرید</a></li>        <li> <a href="{% url 'cart' %}">سبد خرید</a></li><li> <a href="{% url 'logout' %}">حروج از اکانت</a></li>
+      <li class="dropdown">
+        <a href="#" class="dropbtn"><i class="fas fa-bars"></i> منوی محصولات</a>
+        <div class="dropdown-content">
+            <a href="http://127.0.0.1:8000/products/?verticals=hot_drinks">نوشیدنی گرم</a>
+            <a href="http://127.0.0.1:8000/products/?verticals=cold_drinks">نوشیدنی سرد</a>
+            <a href="http://127.0.0.1:8000/products/?verticals=shake">شیک</a>
+            <a href="http://127.0.0.1:8000/products/?verticals=cake">کیک</a>
+        </div>
+      </li>
+    </ul>
+  </nav>
+  <div class="main">
+    <div class="container ">
+      <div class="row row-cols-1 row-cols-md-3 g-4">
+          <div class="col">
+            <div class="card h-100">
+                            <div class="card-body">
+            <h5 class="card-title">سفارش موفقیت امیز بود</h5>
+            <p class="card-text">از سفارش شما متشکریم. سفارش شما با موفقیت ثبت شد</p>
+            <p class="card-text">پس از آماده شدن سفارش شما برای تحویل یا تحویل به شما اطلاع خواهیم داد.</p>
+
         </div>
 
         <div class="order-details">
-            <h2>Order Details</h2>
-            <ul>
-                <li><strong>Order ID:</strong> {{ order.id }}</li>
-                <li><strong>Order Date:</strong> {{ order.created_at }}</li>
-                <li><strong>Total Amount:</strong> ${{ order.purchase_amount }}</li>
-                <li><strong>Order Type:</strong> {% if order.order_type %}Take Away{% else %}Dine In{% endif %}</li>
-            </ul>
+
         </div>
 
-        <a href="{% url 'authenticated_homepage' %}" class="btn">Back to Homepage</a>
+        <button onclick="window.open({% url 'authenticated_homepage' %})" class="btn-coffee">Back to Homepage</button>
     </div>
 </body>
 </html>

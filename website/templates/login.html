@@ -1,96 +1,49 @@
-{% load static %}
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="rtl">
 <head>
+        {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Cafe Karaj</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
-    <link rel="stylesheet" href="{% static 'css/login css.css' %}">
+    <title>Coffee Shop</title>
+    <link rel="stylesheet" href="{% static 'css/mohsen/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/mohsen/src/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <div class="main-container">
-        <div class="navigation">
-            <div class="cafe-karaj">
-                <a href="{% url 'unauthenticated_homepage' %}">
-                    <span class="cafe">cafe</span><span class="nbsp"> </span><span class="karaj">Karaj</span>
-                </a>
-            </div>
-        </div>
-        <div class="signup-form">
-            <div class="copy">
-                <span class="log-in-1">log in</span>
-                <span class="enter-email-password">Enter your email or username & Password to Log in</span>
-            </div>
-            <div class="input-button">
-                <form method="POST" action="{% url 'login' %}">
-                    {% csrf_token %}
-                    <div class="field">
-                        <input class="field-input" type="text" name="username_or_email" required>
-                        <span class="email-username">Email or Username</span>
-                    </div>
-                    <div class="field">
-                        <input class="field-input" type="password" name="password" required>
-                        <span class="email-username">Password</span>
-                    </div>
-                    <button class="login-button" type="submit">
-                        <span class="login-text">Log in</span>
-                    </button>
-            </div>
-            <div class="divider">
-                <div class="rectangle"></div>
-                <span class="continue-with-text">or continue with</span>
-                <div class="rectangle-3"></div>
-            </div>
-            <a href="{% url 'register' %}" class="signup-button">
-                <span class="signup-text">Sign up</span>
-            </a>
-            <div class="terms-service-privacy">
-                <span class="click-agree-continue">By clicking continue, you agree to our </span>
-                <span class="terms-service">Terms of Service</span>
-                <span class="click-agree-continue-4"> and </span>
-                <span class="terms-service-5">Privacy Policy</span>
-            </div>
-        </div>
-        <div class="navigation-footer">
-            <div class="divider-6"></div>
-            <div class="flex-row-f">
-                <div class="regroup">
-                    <div class="items">
-                        <span class="topic">Topic</span><span class="page">Page</span><span class="page-7">Page</span><span class="page-8">Page</span>
-                    </div>
-                    <div class="items-9">
-                        <span class="topic-a">Topic</span><span class="page-b">Page</span><span class="page-c">Page</span><span class="page-d">Page</span>
-                    </div>
-                    <div class="items-e">
-                        <span class="topic-f">Topic</span><span class="page-10">Page</span><span class="page-11">Page</span><span class="page-12">Page</span>
-                    </div>
-                </div>
-                <span class="cafe-karaj-13">Cafe Karaj</span>
-                <div class="social-icons">
-                    <div class="buttons-icon">
-                        <div class="icon">
-                            <div class="icon-14"></div>
+  <nav class="nav">
+    <ul>
+      <li><a href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> ورود</a></li>
+           <li><a href="{% url 'register' %}"><i class="fas fa-sign-in-alt"></i> ثبت نام</a></li>
+
+    </ul>
+  </nav>
+  <div class="main">
+    <div class="container mt-5">
+        <h2 class="section-title">ورود به حساب کاربری</h2>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card p-4">
+                    <form method="POST" action="{% url 'login' %}">
+                                      {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="username"  class="form-label">نام کاربری یا ایمیل</label>
+                            <input type="text"  name="username_or_email" class="form-control" id="username" required>
                         </div>
-                    </div>
-                    <div class="buttons-icon-15">
-                        <div class="icon-16">
-                            <div class="icon-17"></div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">رمز عبور</label>
+                            <input name="password" type="password" class="form-control" id="password" required>
                         </div>
-                    </div>
-                    <div class="buttons-icon-18">
-                        <div class="icon-19">
-                            <div class="icon-1a"></div>
-                        </div>
-                    </div>
-                    <div class="buttons-icon-1b">
-                        <div class="icon-1c">
-                            <div class="icon-1d"></div>
-                        </div>
-                    </div>
+                        <button type="submit" class=" btn-coffee w-100 mb-3">ورود</button>
+                    </form>
+                    <button onclick="window.open('{% url 'register' %}')" type="submit" class=" btn-coffee w-100">ثبت نام</button>
                 </div>
             </div>
         </div>
     </div>
+</div>
+
+  <script src="{% static 'css/mohsen/src/bootstrap.bundle.min.js' %}"></script>
 </body>
 </html>
+
