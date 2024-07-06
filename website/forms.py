@@ -1,5 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.core.validators import MinValueValidator
+from django.core.exceptions import ValidationError
 from .models import Product, Order, User, Cart
 from django.contrib.auth import get_user_model
 
@@ -63,15 +65,50 @@ class AddProductForm(forms.ModelForm):
             'milk': 'شیر',
             'chocolate': 'شکلات',
             'vertical_type': 'نوع دسته بندی',
-            'vertical_type': 'نوع دسته بندی',
             'price': 'قیمت',
             'image': 'تصویر',
         }
+
+    sugar = forms.IntegerField(
+        validators=[MinValueValidator(0, message='مقدار مواد اولیه باید بزرگتر مساوی 0 باشد')],
+        widget=forms.NumberInput(attrs={'class': 'form-control'})
+    )
+    coffee = forms.IntegerField(
+        validators=[MinValueValidator(0, message='مقدار مواد اولیه باید بزرگتر مساوی 0 باشد')],
+        widget=forms.NumberInput(attrs={'class': 'form-control'})
+    )
+    flour = forms.IntegerField(
+        validators=[MinValueValidator(0, message='مقدار مواد اولیه باید بزرگتر مساوی 0 باشد')],
+        widget=forms.NumberInput(attrs={'class': 'form-control'})
+    )
+    egg = forms.IntegerField(
+        validators=[MinValueValidator(0, message='مقدار مواد اولیه باید بزرگتر مساوی 0 باشد')],
+        widget=forms.NumberInput(attrs={'class': 'form-control'})
+    )
+    milk = forms.IntegerField(
+        validators=[MinValueValidator(0, message='مقدار مواد اولیه باید بزرگتر مساوی 0 باشد')],
+        widget=forms.NumberInput(attrs={'class': 'form-control'})
+    )
+    chocolate = forms.IntegerField(
+        validators=[MinValueValidator(0, message='مقدار مواد اولیه باید بزرگتر مساوی 0 باشد')],
+        widget=forms.NumberInput(attrs={'class': 'form-control'})
+    )
+    price = forms.IntegerField(
+        validators=[MinValueValidator(0, message='قیمت باید بزرگتر مساوی 0 باشد')],
+        widget=forms.NumberInput(attrs={'class': 'form-control'})
+    )
 
     def __init__(self, *args, **kwargs):
         super(AddProductForm, self).__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
             field.label_suffix = ''
+
+    def clean_name(self):
+        name = self.cleaned_data.get('name')
+        if Product.objects.filter(name=name).exists():
+            raise ValidationError('یک محصول با این نام قبلاً ثبت شده است.')
+        return name
+
 class UpdateStorageForm(forms.Form):
     ingredient_name = forms.CharField(max_length=255)
     quantity = forms.IntegerField()
