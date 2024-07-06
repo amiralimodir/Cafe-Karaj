@@ -252,11 +252,17 @@ def update_storage_view(request):
 @admin_required
 def management_dashboard_view(request):
     time_period = request.GET.get('time_period', '7')
+    selected_product = request.GET.get('product', None)
     end_date = datetime.now()
     start_date = end_date - timedelta(days=int(time_period))
 
+    sales_data_query = OrderProduct.objects.filter(created_at__range=(start_date, end_date))
+
+    if selected_product:
+        sales_data_query = sales_data_query.filter(product_id=selected_product)
+
     sales_data = (
-        OrderProduct.objects.filter(created_at__range=(start_date, end_date))
+        sales_data_query
         .values('product_id')
         .annotate(sales_count=Count('product_id'))
         .order_by('-sales_count')[:10]
@@ -264,6 +270,7 @@ def management_dashboard_view(request):
 
     product_ids = [data['product_id'] for data in sales_data]
     products = Product.objects.filter(id__in=product_ids)
+    all_products = Product.objects.all()
 
     sales_chart_data = {
         'labels': [products.get(id=data['product_id']).name for data in sales_data],
@@ -272,9 +279,12 @@ def management_dashboard_view(request):
 
     context = {
         'products': products,
+        'all_products': all_products,
         'sales_chart_data': sales_chart_data,
         'time_period': time_period,
+        'selected_product': selected_product,
     }
+
     return render(request, 'management_dashboard.html', context)
 
 
