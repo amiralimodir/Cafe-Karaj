@@ -37,12 +37,41 @@ class OrderForm(forms.ModelForm):
         }
 
 
+
 class AddProductForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = ['name', 'sugar', 'coffee', 'flour', 'egg', 'milk', 'chocolate', 'vertical_type', 'price', 'image']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'sugar': forms.NumberInput(attrs={'class': 'form-control'}),
+            'coffee': forms.NumberInput(attrs={'class': 'form-control'}),
+            'flour': forms.NumberInput(attrs={'class': 'form-control'}),
+            'egg': forms.NumberInput(attrs={'class': 'form-control'}),
+            'milk': forms.NumberInput(attrs={'class': 'form-control'}),
+            'chocolate': forms.NumberInput(attrs={'class': 'form-control'}),
+            'vertical_type': forms.Select(attrs={'class': 'form-control'}),
+            'price': forms.NumberInput(attrs={'class': 'form-control'}),
+            'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+        }
+        labels = {
+            'name': 'نام',
+            'sugar': 'شکر',
+            'coffee': 'قهوه',
+            'flour': 'آرد',
+            'egg': 'تخم مرغ',
+            'milk': 'شیر',
+            'chocolate': 'شکلات',
+            'vertical_type': 'نوع دسته بندی',
+            'vertical_type': 'نوع دسته بندی',
+            'price': 'قیمت',
+            'image': 'تصویر',
+        }
 
-
+    def __init__(self, *args, **kwargs):
+        super(AddProductForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.label_suffix = ''
 class UpdateStorageForm(forms.Form):
     ingredient_name = forms.CharField(max_length=255)
     quantity = forms.IntegerField()

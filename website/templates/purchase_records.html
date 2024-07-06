@@ -1,23 +1,23 @@
 {% extends 'base.html' %}
 
-{% block title %}Purchase Records{% endblock %}
 
 {% block content %}
-<h2>Purchase Records</h2>
+<h2 class="section-title">سوابق خرید</h2>
+          <div class="row row-cols-1 row-cols-md-3 g-4">
 {% for order in orders %}
-<div class="card mb-3">
-    <div class="card-body">
-        <h5 class="card-title">Order #{{ order.order_id }}</h5>
-        <p class="card-text">Amount: {{ order.purchase_amount }}</p>
-        <p class="card-text">Type: {{ order.type }}</p>
-        <p class="card-text">Date: {{ order.order_date }}</p>
-        <h6>Products:</h6>
-        <ul>
-            {% for item in order.products %}
-            <li>{{ item.product.name }} - Quantity: {{ item.quantity }}</li>
+
+                  <div class="col">
+          <div class="card h-100">
+           <div class="card-body">
+              <h5 class="card-title">سفارش شماره  #{{ order.order_id }}</h5>
+              <p class="card-text">قیمت: {{ order.purchase_amount }}</p>
+                        <p class="card-text">نوع: {{ order.type }}</p>
+        <p class="card-text">تاریخ: {{ order.order_date }}</p>
+                            {% for item in order.products %}
+            <li>{{ item.product.name }} - تعداد: {{ item.quantity }}</li>
             {% endfor %}
-        </ul>
-    </div>
-</div>
+            </div>
+          </div>
+          </div>
 {% endfor %}
 {% endblock %}
