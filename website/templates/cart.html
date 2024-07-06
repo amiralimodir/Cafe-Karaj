@@ -3,7 +3,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-        {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Coffee Shop</title>
@@ -14,7 +13,11 @@
 <body>
   <nav class="nav">
     <ul>
-       <li>    <a href="">خوش آمدید, {{ request.user.username }}</a></li>        <li>    <a href="{% url 'product_list' %}">لیست محصولات</a></li>        <li>    <a href="{% url 'purchase_records' %}">سوابق خرید</a></li>        <li> <a href="{% url 'cart' %}">سبد خرید</a></li><li> <a href="{% url 'logout' %}">حروج از اکانت</a></li>
+       <li>    <a href="">خوش آمدید, {{ request.user.username }}</a></li>
+       <li>    <a href="{% url 'product_list' %}">لیست محصولات</a></li>
+       <li>    <a href="{% url 'purchase_records' %}">سوابق خرید</a></li>
+       <li> <a href="{% url 'cart' %}">سبد خرید</a></li>
+       <li> <a href="{% url 'logout' %}">حروج از اکانت</a></li>
       <li class="dropdown">
         <a href="#" class="dropbtn"><i class="fas fa-bars"></i> منوی محصولات</a>
         <div class="dropdown-content">
@@ -26,7 +29,7 @@
       </li>
     </ul>
   </nav>
-   <div class="main">
+  <div class="main">
     <div class="container mt-5">
         <h2 class="section-title">سبد خرید</h2>
         <div class="card p-4">
@@ -37,6 +40,7 @@
                         <th>تعداد</th>
                         <th>قیمت</th>
                         <th>مجموع</th>
+                        <th>عملیات</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -44,37 +48,41 @@
                     <tr>
                         <td>{{ item.product.name }}</td>
                         <td>
-                                  <form method="POST" action="{% url 'cart' %}">
-                        {% csrf_token %}
-                        <input type="hidden" name="cart_id" value="{{ item.id }}">
-                        <input type="number" value="{{ item.quantity }}" min="1" name="quantity" class="form-control mb-2">
-                        <button class=" btn-coffee" type="submit">بروز رسانی</button>
-                    </form>
-
+                            <form method="POST" action="{% url 'cart' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="cart_id" value="{{ item.id }}">
+                                <input type="number" value="{{ item.quantity }}" min="1" name="quantity" class="form-control mb-2">
+                                <button class="btn-coffee" type="submit" name="update_quantity">بروز رسانی</button>
+                            </form>
                         </td>
                         <td>{{ item.product.price }}</td>
                         <td>{{ item.product.price|multiply:item.quantity }}</td>
+                        <td>
+                            <form method="POST" action="{% url 'cart' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="cart_id" value="{{ item.id }}">
+                                <button class="btn-coffee" type="submit" name="remove_item">حذف</button>
+                            </form>
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>
             </table>
             <div class="text-end">
-                <p>{{ total_price }}  </p><p> تومان</p>
-
+                <p>{{ total_price }} تومان</p>
             </div>
             <div class="text-end">
-                            <form method="POST" action="{% url 'place_order' %}">
-                {% csrf_token %}
-                <label for="order_type">Delivery</label>
-                <input type="checkbox" name="order_type" id="order_type">
-                <button class=" btn-coffee"><span class="span-a">پرداخت</span></button>
-            </form>
+                <form method="POST" action="{% url 'place_order' %}">
+                    {% csrf_token %}
+                    <label for="order_type">Delivery</label>
+                    <input type="checkbox" name="order_type" id="order_type">
+                    <button class="btn-coffee"><span class="span-a">پرداخت</span></button>
+                </form>
             </div>
         </div>
     </div>
-</div>
+  </div>
 
   <script src="{% static 'css/mohsen/src/bootstrap.bundle.min.js' %}"></script>
 </body>
 </html>
-

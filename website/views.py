@@ -91,11 +91,16 @@ def cart_view(request):
     total_price = sum(item.product.price * item.quantity for item in cart_items)
     
     if request.method == 'POST':
-        cart_id = request.POST.get('cart_id')
-        quantity = request.POST.get('quantity')
-        cart_item = get_object_or_404(Cart, id=cart_id)
-        cart_item.quantity = int(quantity)
-        cart_item.save()
+        if 'update_quantity' in request.POST:
+            cart_id = request.POST.get('cart_id')
+            quantity = request.POST.get('quantity')
+            cart_item = get_object_or_404(Cart, id=cart_id)
+            cart_item.quantity = int(quantity)
+            cart_item.save()
+        elif 'remove_item' in request.POST:
+            cart_id = request.POST.get('cart_id')
+            cart_item = get_object_or_404(Cart, id=cart_id)
+            cart_item.delete()
         return redirect('cart')
 
     context = {
