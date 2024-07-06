@@ -9,12 +9,21 @@
 <div class="row mb-3">
     <div class="col-md-6">
         <h4>Sales Data</h4>
-        <form method="get" id="timePeriodForm">
+        <form method="get" id="filterForm">
             <label for="time_period">Time Period:</label>
-            <select name="time_period" id="time_period" onchange="document.getElementById('timePeriodForm').submit();">
+            <select name="time_period" id="time_period" onchange="document.getElementById('filterForm').submit();">
                 <option value="7" {% if time_period == '7' %}selected{% endif %}>Last 7 days</option>
                 <option value="30" {% if time_period == '30' %}selected{% endif %}>Last 30 days</option>
                 <option value="90" {% if time_period == '90' %}selected{% endif %}>Last 90 days</option>
+            </select>
+            <label for="product">Product:</label>
+            <select name="product" id="product" onchange="document.getElementById('filterForm').submit();">
+                <option value="" {% if not selected_product %}selected{% endif %}>All Products</option>
+                {% for product in all_products %}
+                <option value="{{ product.id }}" {% if selected_product == product.id|stringformat:"s" %}selected{% endif %}>
+                    {{ product.name }}
+                </option>
+                {% endfor %}
             </select>
         </form>
         <canvas id="salesChart"></canvas>
